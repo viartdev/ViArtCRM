@@ -1,0 +1,153 @@
+﻿@model ViArtCRM.Models.TaskContainer
+
+@{
+    ViewData["Title"] = "Scheduler";
+}
+
+<environment include="Development">
+    <link rel="stylesheet" href="~/css/Scheduler.css" />
+</environment>
+
+<h2>Scheduler</h2>
+<div class="jumbotron">
+    <div class="row">
+        <div class="col-lg-6" >
+            <h1>To Do</h1>
+        </div>
+        <div class="col-lg-6" align="right" >
+            @Html.ActionLink("Create A New Task", "Create", "Scheduler", null, new { @class = "btn btn-primary btn-large createButton" })
+        </div>
+    </div>
+    <div class="row">
+        @foreach (var item in Model.ToDoTasks) {
+            <div class="col-lg-3" style="padding-bottom:10px">
+                <div class="card">
+                    <div class="card-header">
+                        @item.TaskName
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <label class="propertyCaptionLabel">@Html.DisplayNameFor(model => item.StartDate):</label>
+                            </div>
+                            <div class="col-lg-8">
+                                <p class="card-text cardText">@item.StartDate.ToShortDateString()</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <label class="propertyCaptionLabel">@Html.DisplayNameFor(model => item.EndDate):</label>
+                            </div>
+                            <div class="col-lg-8">
+                                <p class="card-text cardText">@item.EndDate.ToShortDateString()</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <p class="card-text cardText">@item.TaskDescription</p>
+                            </div>
+                        </div>
+
+                        @*<a href="#" class="btn btn-primary">Go somewhere</a>*@
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<div class="jumbotron">
+    <div class="row">
+        <div class="col-lg-12" >
+            <h1>In Moderate</h1>
+        </div>
+    </div>
+    <div class="row">
+        @foreach (var item in Model.InModerateTasks) {
+            <div class="col-lg-3" style="padding-bottom:10px">
+                <div class="card">
+                    <div class="card-header">
+                        @item.TaskName
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <label class="propertyCaptionLabel">@Html.DisplayNameFor(model => item.StartDate):</label>
+                            </div>
+                            <div class="col-lg-8">
+                                <p class="card-text cardText">@item.StartDate.ToShortDateString()</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <label class="propertyCaptionLabel">@Html.DisplayNameFor(model => item.EndDate):</label>
+                            </div>
+                            <div class="col-lg-8">
+                                <p class="card-text cardText">@item.EndDate.ToShortDateString()</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <p class="card-text cardText">@item.TaskDescription</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: @item.TaskProgress%;" aria-valuenow="@item.TaskProgress" aria-valuemin="0" aria-valuemax="100">@item.TaskProgress%</div>
+                                </div>
+                            </div>
+                        </div>
+                        @*<a href="#" class="btn btn-primary">Go somewhere</a>*@
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<div class="jumbotron">
+    <div class="row">
+        <div class="col-lg-12" >
+            <h1>Completed</h1>
+        </div>
+    </div>
+    <div class="row">
+        @foreach (var item in Model.CompletedTasks) {
+            <div class="col-lg-3" style="padding-bottom:10px">
+                <div class="card">
+                    <div class="card-header">
+                        @item.TaskName
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <label class="propertyCaptionLabel">@Html.DisplayNameFor(model => item.StartDate):</label>
+                            </div>
+                            <div class="col-lg-8">
+                                <p class="card-text cardText">@item.StartDate.ToShortDateString()</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <label class="propertyCaptionLabel">@Html.DisplayNameFor(model => item.EndDate):</label>
+                            </div>
+                            <div class="col-lg-8">
+                                <p class="card-text cardText">@item.EndDate.ToShortDateString()</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <p class="card-text cardText">@item.TaskDescription</p>
+                            </div>
+                        </div>
+
+                        @*<a href="#" class="btn btn-primary">Go somewhere</a>*@
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+
+

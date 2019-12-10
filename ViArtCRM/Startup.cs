@@ -22,6 +22,7 @@ namespace ViArtCRM
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.Add(new ServiceDescriptor(typeof(Models.TasksContext), new Models.TasksContext(Configuration.GetConnectionString("TasksConnection"))));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,7 +44,7 @@ namespace ViArtCRM
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Scheduler}/{action=Index}/{id?}");
             });
         }
     }

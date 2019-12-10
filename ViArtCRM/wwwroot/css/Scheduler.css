@@ -1,0 +1,21 @@
+﻿.headerClass td {
+    background-color: skyblue;
+}
+
+.scroll {
+    max-width: 600px;
+    overflow-x: auto;
+}
+
+.cardText {
+    font-size: 10pt !important;
+}
+
+.propertyCaptionLabel {
+    font-size: 10pt !important;
+    font-weight: bold !important;
+}
+
+.jumbotron {
+    padding: 2rem 2rem !important;
+}
