@@ -44,7 +44,7 @@ namespace ViArtCRM
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Scheduler}/{action=Index}/{id?}");
             });
         }
     }
