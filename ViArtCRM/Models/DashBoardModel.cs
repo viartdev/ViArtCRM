@@ -34,6 +34,8 @@ namespace ViArtCRM.Models {
         }
 
         public int Status { get; set; }
+
+        public int ModuleID { get; set; }
     }
 
     public class TasksContext {
@@ -49,19 +51,19 @@ namespace ViArtCRM.Models {
 
         // CRUD Methods
 
-        public TaskContainer GetTaskContainer() {
+        public TaskContainer GetTaskContainer(int moduleID) {
             TaskContainer taskContainer = new TaskContainer();
-            taskContainer.ToDoTasks = GetTasks(0);
-            taskContainer.InModerateTasks = GetTasks(1);
-            taskContainer.CompletedTasks = GetTasks(2);
+            taskContainer.ToDoTasks = GetTasks(0, moduleID);
+            taskContainer.InModerateTasks = GetTasks(1, moduleID);
+            taskContainer.CompletedTasks = GetTasks(2, moduleID);
             return taskContainer;
         }
 
-        private List<Task> GetTasks(int taskStatus) {
+        private List<Task> GetTasks(int taskStatus, int moduleID) {
             List<Task> list = new List<Task>();
             using (MySqlConnection conn = GetConnection()) {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand(String.Format("select * from Tasks where TaskStatus = {0}", taskStatus), conn);
+                MySqlCommand cmd = new MySqlCommand(String.Format("select * from Tasks where TaskStatus = {0} and ModuleID = {1}", taskStatus, moduleID), conn);
 
                 using (var reader = cmd.ExecuteReader()) {
                     while (reader.Read()) {
@@ -72,7 +74,8 @@ namespace ViArtCRM.Models {
                             TaskProgress = Convert.ToInt32(reader["TaskProgress"]),
                             StartDate = Convert.ToDateTime(reader["StartDate"]),
                             EndDate = Convert.ToDateTime(reader["EndDate"]),
-                            Status = Convert.ToInt32(reader["TaskStatus"])
+                            Status = Convert.ToInt32(reader["TaskStatus"]),
+                            ModuleID = Convert.ToInt32(reader["ModuleID"])
                         });
                     }
                 }
@@ -89,6 +92,7 @@ namespace ViArtCRM.Models {
                 cmd.Parameters.AddWithValue("@StartDate", task.StartDate);
                 cmd.Parameters.AddWithValue("@EndDate", task.EndDate);
                 cmd.Parameters.AddWithValue("@TaskStatus", 0);
+                cmd.Parameters.AddWithValue("@ModuleID", task.ModuleID);
                 cmd.ExecuteNonQuery();
             }
         }
