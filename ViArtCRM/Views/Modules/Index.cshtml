@@ -1,0 +1,26 @@
+﻿@model List<ViArtCRM.Models.TaskModule>
+@{
+    ViewData["Title"] = "Index";
+}
+<script src="~/js/ModulesScript.js" type="text/javascript"></script>
+
+<h2>Index</h2>
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Module ID</th>
+            <th scope="col">Module Name</th>
+            <th scope="col">Module Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model) {
+            <tr class="clickable-row" data-moduleID="@item.ModuleID" data-href="DashBoard">
+                <th scope="row">@item.ModuleID</th>
+                <td>@item.ModuleName</td>
+                <td>@item.ModuleDescription</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

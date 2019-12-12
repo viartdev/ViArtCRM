@@ -7,45 +7,42 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ViArtCRM
-{
-    public class Startup
-    {
-        public Startup(IConfiguration configuration)
-        {
+namespace ViArtCRM {
+    public class Startup {
+        public Startup(IConfiguration configuration) {
             Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
+        public void ConfigureServices(IServiceCollection services) {
             services.AddMvc();
+            services.AddMemoryCache();
+            services.AddSession();
+
             services.Add(new ServiceDescriptor(typeof(Models.TasksContext), new Models.TasksContext(Configuration.GetConnectionString("TasksConnection"))));
+            services.Add(new ServiceDescriptor(typeof(Models.TaskModuleContext), new Models.TaskModuleContext(Configuration.GetConnectionString("TasksConnection"))));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
+            if (env.IsDevelopment()) {
                 app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
+            else {
                 app.UseExceptionHandler("/Home/Error");
             }
 
             app.UseStaticFiles();
-
-            app.UseMvc(routes =>
-            {
+            app.UseSession();
+            app.UseMvc(routes => {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Scheduler}/{action=Index}/{id?}");
+                    template: "{controller=Scheduler}/{action=Index}/{id?}");                
             });
+
         }
     }
 }
