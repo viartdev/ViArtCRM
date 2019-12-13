@@ -7,6 +7,7 @@
 }
 
 .dropzone {
+    min-height: 300px;
     background-color: #ccc;
     border: dashed 4px transparent;
     border-radius: 4px;
