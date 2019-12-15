@@ -5,13 +5,19 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace ViArtCRM.Models {
+    public class TaskMovingData {
+        public int taskID { get; set; }
+        public int currentTaskStatus { get; set; }
+    }
+
     public class TaskContainer {
-        public List<Task> ToDoTasks { get; set; }
-        public List<Task> InModerateTasks { get; set; }
-        public List<Task> CompletedTasks { get; set; }
+        public int ModuleID { get; set; }
+        public List<TaskObject> ToDoTasks { get; set; }
+        public List<TaskObject> InModerateTasks { get; set; }
+        public List<TaskObject> CompletedTasks { get; set; }
 
     }
-    public class Task {
+    public class TaskObject {
 
         private TasksContext context;
 
@@ -53,21 +59,38 @@ namespace ViArtCRM.Models {
 
         public TaskContainer GetTaskContainer(int moduleID) {
             TaskContainer taskContainer = new TaskContainer();
+            taskContainer.ModuleID = moduleID;
             taskContainer.ToDoTasks = GetTasks(0, moduleID);
             taskContainer.InModerateTasks = GetTasks(1, moduleID);
             taskContainer.CompletedTasks = GetTasks(2, moduleID);
             return taskContainer;
         }
+        public TaskObject GetTaskByID(int id) {
+            var tasks = GetTasks();
+            return tasks.First(s => s.TaskID == id);
+        }
 
-        private List<Task> GetTasks(int taskStatus, int moduleID) {
-            List<Task> list = new List<Task>();
+        string GetQueryString(int taskStatus, int moduleID) {
+            string qrStr;
+            if (taskStatus == -1 && moduleID == -1) {
+                qrStr = String.Format("select * from Tasks", taskStatus, moduleID);
+            }
+            else {
+                qrStr = String.Format("select * from Tasks where TaskStatus = {0} and ModuleID = {1}", taskStatus, moduleID);
+            }
+            return qrStr;
+
+        }
+        public List<TaskObject> GetTasks(int taskStatus = -1, int moduleID = -1) {
+            List<TaskObject> list = new List<TaskObject>();
             using (MySqlConnection conn = GetConnection()) {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand(String.Format("select * from Tasks where TaskStatus = {0} and ModuleID = {1}", taskStatus, moduleID), conn);
+                string queryString = GetQueryString(taskStatus, moduleID);
+                MySqlCommand cmd = new MySqlCommand(queryString, conn);
 
                 using (var reader = cmd.ExecuteReader()) {
                     while (reader.Read()) {
-                        list.Add(new Task() {
+                        list.Add(new TaskObject() {
                             TaskID = Convert.ToInt32(reader["TaskID"]),
                             TaskName = reader["TaskName"].ToString(),
                             TaskDescription = reader["TaskDescription"].ToString(),
@@ -82,10 +105,10 @@ namespace ViArtCRM.Models {
             }
             return list;
         }
-        public void InsertTask(Task task) {
+        public void InsertTask(TaskObject task) {
             using (MySqlConnection conn = GetConnection()) {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO Tasks(TaskName,TaskDescription,TaskProgress,StartDate,EndDate,TaskStatus) VALUES(@TaskName, @TaskDescription, @TaskProgress, @StartDate, @EndDate, @TaskStatus)", conn);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO Tasks(TaskName,TaskDescription,TaskProgress,StartDate,EndDate,TaskStatus,ModuleID) VALUES(@TaskName, @TaskDescription, @TaskProgress, @StartDate, @EndDate, @TaskStatus, @ModuleID)", conn);
                 cmd.Parameters.AddWithValue("@TaskName", task.TaskName);
                 cmd.Parameters.AddWithValue("@TaskDescription", task.TaskDescription);
                 cmd.Parameters.AddWithValue("@TaskProgress", 0);
@@ -94,6 +117,31 @@ namespace ViArtCRM.Models {
                 cmd.Parameters.AddWithValue("@TaskStatus", 0);
                 cmd.Parameters.AddWithValue("@ModuleID", task.ModuleID);
                 cmd.ExecuteNonQuery();
+            }
+        }
+        public void UpdateTask(TaskObject task) {
+            using (MySqlConnection conn = GetConnection()) {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("UPDATE Tasks SET(TaskName,TaskDescription,TaskProgress,StartDate,EndDate,TaskStatus, ModuleID) VALUES(@TaskName, @TaskDescription, @TaskProgress, @StartDate, @EndDate, @TaskStatus, @ModuleID) WHERE TaskID = @TaskID", conn);
+                cmd.Parameters.AddWithValue("@TaskID", task.TaskID);
+                cmd.Parameters.AddWithValue("@TaskName", task.TaskName);
+                cmd.Parameters.AddWithValue("@TaskDescription", task.TaskDescription);
+                cmd.Parameters.AddWithValue("@TaskProgress", 0);
+                cmd.Parameters.AddWithValue("@StartDate", task.StartDate);
+                cmd.Parameters.AddWithValue("@EndDate", task.EndDate);
+                cmd.Parameters.AddWithValue("@TaskStatus", 0);
+                cmd.Parameters.AddWithValue("@ModuleID", task.ModuleID);
+                cmd.ExecuteNonQuery();
+            }
+        }
+        public int MoveTask(int taskID, int currentTaskStatus, int targetStatus) {
+            using (MySqlConnection conn = GetConnection()) {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("UPDATE Tasks SET TaskStatus = @TaskStatus WHERE TaskID = @TaskID", conn);
+                cmd.Parameters.AddWithValue("@TaskID", taskID);
+                cmd.Parameters.AddWithValue("@TaskStatus", targetStatus);
+                int rowsAffected = cmd.ExecuteNonQuery();
+                return rowsAffected;
             }
         }
 

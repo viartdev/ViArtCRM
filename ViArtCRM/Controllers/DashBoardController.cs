@@ -8,9 +8,11 @@ using ViArtCRM.Models;
 
 namespace ViArtCRM.Controllers {
     public class DashBoardController : Controller {
-        
+
+
+
         [Route("DashBoard/Index/{moduleid?}")]
-        public IActionResult Index(int moduleid) {            
+        public IActionResult Index(int moduleid) {
             if (moduleid == -1)
                 return RedirectToAction("Error");
 
@@ -18,16 +20,38 @@ namespace ViArtCRM.Controllers {
             return View(context.GetTaskContainer(moduleid));
         }
 
-        public IActionResult Create() {
-            return View();
+        public IActionResult Create(TaskObject task) {
+            return View(task);
+        }
+        public IActionResult Edit(int id) {
+            TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
+            return View(context.GetTaskByID(id));
+        }
+
+        [HttpPost]
+        public JsonResult Move(TaskMovingData data, int targetStatus = -1) {
+            TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
+            if (targetStatus == -1)
+                targetStatus = data.currentTaskStatus += 1;
+            int rowsAffected = context.MoveTask(data.taskID, data.currentTaskStatus, targetStatus);
+
+            return Json(String.Format("'RowsAffected':'{0}'", rowsAffected));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Models.Task task) {
+        public ActionResult Edit(TaskObject task) {
             TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
             context.InsertTask(task);
             return RedirectToAction("Index");
+        }
+
+        [HttpPost, ActionName("Create")]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateMethod(TaskObject task) {
+            TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
+            context.InsertTask(task);
+            return RedirectToAction("Index", new { moduleID = task.ModuleID });
         }
     }
 }
