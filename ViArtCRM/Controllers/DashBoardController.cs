@@ -29,11 +29,11 @@ namespace ViArtCRM.Controllers {
         }
 
         [HttpPost]
-        public JsonResult Move(TaskMovingData data, int targetStatus = -1) {
+        public ActionResult Move([FromBody]TaskMovingData data, int targetStatus = -1) {            
             TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
             if (targetStatus == -1)
-                targetStatus = data.currentTaskStatus += 1;
-            int rowsAffected = context.MoveTask(data.taskID, data.currentTaskStatus, targetStatus);
+                targetStatus = Convert.ToInt32(data.currentTaskStatus) + 1;
+            int rowsAffected = context.MoveTask(Convert.ToInt32(data.taskID), Convert.ToInt32(data.currentTaskStatus), targetStatus);
 
             return Json(String.Format("'RowsAffected':'{0}'", rowsAffected));
         }

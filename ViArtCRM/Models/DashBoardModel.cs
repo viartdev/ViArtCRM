@@ -2,12 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace ViArtCRM.Models {
     public class TaskMovingData {
-        public int taskID { get; set; }
-        public int currentTaskStatus { get; set; }
+        [DataMember(Name = "taskID")]
+        public string taskID { get; set; }
+        [DataMember(Name = "currentTaskStatus")]
+        public string currentTaskStatus { get; set; }
     }
 
     public class TaskContainer {
