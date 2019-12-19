@@ -129,10 +129,10 @@ namespace ViArtCRM.Models {
                 cmd.Parameters.AddWithValue("@TaskID", task.TaskID);
                 cmd.Parameters.AddWithValue("@TaskName", task.TaskName);
                 cmd.Parameters.AddWithValue("@TaskDescription", task.TaskDescription);
-                cmd.Parameters.AddWithValue("@TaskProgress", 0);
+                cmd.Parameters.AddWithValue("@TaskProgress", task.TaskProgress);
                 cmd.Parameters.AddWithValue("@StartDate", task.StartDate);
                 cmd.Parameters.AddWithValue("@EndDate", task.EndDate);
-                cmd.Parameters.AddWithValue("@TaskStatus", 0);
+                cmd.Parameters.AddWithValue("@TaskStatus", task.Status);
                 cmd.Parameters.AddWithValue("@ModuleID", task.ModuleID);
                 cmd.ExecuteNonQuery();
             }

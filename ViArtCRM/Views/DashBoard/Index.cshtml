@@ -59,8 +59,7 @@
     <div id="jumbotronBodyRow" class="row">
         @foreach (var item in Model.ToDoTasks)
         {
-            <div id="@item.TaskID" class="col-lg-3 draggbleCard" style="        padding-bottom: 10px
-">
+            <div id="@item.TaskID" class="col-lg-3 draggbleCard" style="padding-bottom: 10px">
                 <div class="card shadow ">
                     <div class="card-header">
                         <div class="row">
@@ -68,7 +67,7 @@
                                 @item.TaskName
                             </div>
                             <div class="col-lg-3">
-                                @Html.ActionLink("Edit", "Edit", "DashBoard", new ViArtCRM.Models.TaskObject { ModuleID = Model.ModuleID }, new { @class = "btn btn-outline-secondary btn-sm editButton" })
+                                @Html.ActionLink("Edit", "Edit", "DashBoard", item, new { @class = "btn btn-outline-secondary btn-sm editButton" })
                             </div>
                         </div>
                     </div>
@@ -125,7 +124,7 @@
                                 @item.TaskName
                             </div>
                             <div class="col-lg-3">
-                                @Html.ActionLink("Edit", "Edit", "DashBoard", new ViArtCRM.Models.TaskObject { ModuleID = Model.ModuleID }, new { @class = "btn btn-outline-secondary btn-sm editButton" })
+                                @Html.ActionLink("Edit", "Edit", "DashBoard", item, new { @class = "btn btn-outline-secondary btn-sm editButton" })
 
 
                             </div>
@@ -184,7 +183,7 @@
                                 @item.TaskName
                             </div>
                             <div class="col-lg-3">
-                                @Html.ActionLink("Edit", "Edit", "DashBoard", new ViArtCRM.Models.TaskObject { ModuleID = Model.ModuleID }, new { @class = "btn btn-outline-secondary btn-sm editButton" })
+                                @Html.ActionLink("Edit", "Edit", "DashBoard", item, new { @class = "btn btn-outline-secondary btn-sm editButton" })
 
                             </div>
                         </div>

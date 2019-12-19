@@ -5,10 +5,10 @@
 
 <h4>Task</h4>
 <hr />
-<div class="row" >
+<div class="row">
     <div class="col-lg-4">
-        <form asp-action="View">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>           
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="TaskName" class="control-label"></label>
                 <input asp-for="TaskName" class="form-control" />
@@ -33,12 +33,12 @@
                 <label asp-for="EndDate" class="control-label"></label>
                 <input asp-for="EndDate" class="form-control" />
                 <span asp-validation-for="EndDate" class="text-danger"></span>
-            </div>           
+            </div>
             <div class="form-group">
                 <label asp-for="Status" class="control-label"></label>
                 <input asp-for="Status" class="form-control" />
                 <span asp-validation-for="Status" class="text-danger"></span>
-            </div>            
+            </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary btn-large" />
             </div>
@@ -49,4 +49,4 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
+}

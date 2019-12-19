@@ -23,9 +23,9 @@ namespace ViArtCRM.Controllers {
         public IActionResult Create(TaskObject task) {
             return View(task);
         }
-        public IActionResult Edit(int id) {
+        public IActionResult Edit(TaskObject task) {
             TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
-            return View(context.GetTaskByID(id));
+            return View(context.GetTaskByID(task.TaskID));
         }
 
         [HttpPost]
@@ -38,11 +38,11 @@ namespace ViArtCRM.Controllers {
             return Json(String.Format("'RowsAffected':'{0}'", rowsAffected));
         }
 
-        [HttpPost]
+        [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(TaskObject task) {
+        public ActionResult EditMethod(TaskObject task) {
             TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
-            context.InsertTask(task);
+            context.UpdateTask(task);
             return RedirectToAction("Index");
         }
 
