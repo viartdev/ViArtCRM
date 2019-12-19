@@ -6,24 +6,70 @@
 
 <environment include="Development">
     <link rel="stylesheet" href="~/css/Scheduler.css" />
+    @*<link rel="stylesheet" href="~/css/drag-drop.css" />*@
 </environment>
+<style type="text/css">
+    td {
+        vertical-align: top;
+    }
 
-<h2>Scheduler</h2>
-<div class="jumbotron">
+    .draggingStyle {
+        background-color: lightblue;
+    }
+
+    .targetGrid {
+        background-color: lightcoral;
+    }
+    .redline{
+    background-color: #ffbcbc !important; 
+    }
+    .yellowline{
+        background-color: #edf397 !important; 
+    }
+    .greenline{
+        background-color: #60d8a1 !important; 
+    }
+    .moveButton {
+        width: 100%;
+        margin-top:10px;
+    }
+    .tabletext
+    {
+        padding-top:20px;
+        padding-bottom:20px
+    }
+</style>
+
+@*<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>*@
+
+<script src="~/js/AjaxMove.js" type="text/javascript"></script>
+<script src="~/js/TimeEqual.js" type="text/javascript"></script>
+
+
+<div id="todo-zone" class="jumbotron ">
     <div class="row">
-        <div class="col-lg-6" >
-            <h1>To Do</h1>
+        <div class="col-lg-6">
+            <h1 class="tabletext">To Do</h1>
         </div>
-        <div class="col-lg-6" align="right" >
-            @Html.ActionLink("Create A New Task", "Create", "DashBoard", null, new { @class = "btn btn-primary btn-large createButton" })
+        <div class="col-lg-6" align="right">
+            @Html.ActionLink("Create A New Task", "Create", "DashBoard", new { moduleID = Model.ModuleID }, new { @class = "btn btn-outline-info btn-large createButton" })
         </div>
     </div>
-    <div class="row">
-        @foreach (var item in Model.ToDoTasks) {
-            <div class="col-lg-3" style="padding-bottom:10px">
-                <div class="card">
+    <div id="jumbotronBodyRow" class="row">
+        @foreach (var item in Model.ToDoTasks)
+        {
+            <div id="@item.TaskID" class="col-lg-3 draggbleCard" style="padding-bottom: 10px">
+                <div class="card shadow ">
                     <div class="card-header">
-                        @item.TaskName
+                        <div class="row">
+                            <div class="col-lg-9">
+                                @item.TaskName
+                            </div>
+                            <div class="col-lg-3">
+                                @Html.ActionLink("Edit", "Edit", "DashBoard", item, new { @class = "btn btn-outline-secondary btn-sm editButton" })
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -39,12 +85,18 @@
                                 <label class="propertyCaptionLabel">@Html.DisplayNameFor(model => item.EndDate):</label>
                             </div>
                             <div class="col-lg-8">
-                                <p class="card-text cardText">@item.EndDate.ToShortDateString()</p>
+                                <p id ="date" class="card-text cardText">@item.EndDate.ToString("yyyy/MM/dd")</p>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-lg-12">
                                 <p class="card-text cardText">@item.TaskDescription</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <input type="submit" style="" data-taskID="@item.TaskID" data-taskStatus="@item.Status" value="Move" class="btn btn-outline-dark btn-sm moveButton " />
+
                             </div>
                         </div>
 
@@ -55,18 +107,28 @@
         }
     </div>
 </div>
-<div class="jumbotron">
+<div id="moderate-zone" class="jumbotron ">
     <div class="row">
-        <div class="col-lg-12" >
-            <h1>In Moderate</h1>
+        <div class="col-lg-12">
+            <h1 class="tabletext">In Moderate</h1>
         </div>
     </div>
-    <div class="row">
-        @foreach (var item in Model.InModerateTasks) {
-            <div class="col-lg-3" style="padding-bottom:10px">
-                <div class="card">
+    <div id="jumbotronBodyRow" class="row">
+        @foreach (var item in Model.InModerateTasks)
+        {
+            <div id="@item.TaskID" class="col-lg-3 draggbleCard" style="padding-bottom: 10px">
+                <div class="card shadow ">
                     <div class="card-header">
-                        @item.TaskName
+                        <div class="row">
+                            <div class="col-lg-9">
+                                @item.TaskName
+                            </div>
+                            <div class="col-lg-3">
+                                @Html.ActionLink("Edit", "Edit", "DashBoard", item, new { @class = "btn btn-outline-secondary btn-sm editButton" })
+
+
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -82,7 +144,7 @@
                                 <label class="propertyCaptionLabel">@Html.DisplayNameFor(model => item.EndDate):</label>
                             </div>
                             <div class="col-lg-8">
-                                <p class="card-text cardText">@item.EndDate.ToShortDateString()</p>
+                                <p id="date"class="card-text cardText">@item.EndDate.ToString("yyyy/MM/dd")</p>
                             </div>
                         </div>
                         <div class="row">
@@ -93,7 +155,7 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="progress">
-                                    <div class="progress-bar" role="progressbar" style="width: @item.TaskProgress%;" aria-valuenow="@item.TaskProgress" aria-valuemin="0" aria-valuemax="100">@item.TaskProgress%</div>
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: @item.TaskProgress%;" aria-valuenow="@item.TaskProgress" aria-valuemin="0" aria-valuemax="100">@item.TaskProgress%</div>
                                 </div>
                             </div>
                         </div>
@@ -104,18 +166,27 @@
         }
     </div>
 </div>
-<div class="jumbotron">
+<div id="complete-zone" class="jumbotron ">
     <div class="row">
-        <div class="col-lg-12" >
-            <h1>Completed</h1>
+        <div class="col-lg-12">
+            <h1 class="tabletext">Completed</h1>
         </div>
     </div>
-    <div class="row">
-        @foreach (var item in Model.CompletedTasks) {
-            <div class="col-lg-3" style="padding-bottom:10px">
-                <div class="card">
+    <div id="jumbotronBodyRow" class="row">
+        @foreach (var item in Model.CompletedTasks)
+        {
+            <div id="@item.TaskID" class="col-lg-3 draggbleCard" style="padding-bottom: 10px ">
+                <div class="card shadow ">
                     <div class="card-header">
-                        @item.TaskName
+                        <div class="row">
+                            <div class="col-lg-9">
+                                @item.TaskName
+                            </div>
+                            <div class="col-lg-3">
+                                @Html.ActionLink("Edit", "Edit", "DashBoard", item, new { @class = "btn btn-outline-secondary btn-sm editButton" })
+
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -128,7 +199,7 @@
                         </div>
                         <div class="row">
                             <div class="col-lg-4">
-                                <label class="propertyCaptionLabel">@Html.DisplayNameFor(model => item.EndDate):</label>
+                                <label id="date" class="propertyCaptionLabel">@Html.DisplayNameFor(model => item.EndDate):</label>
                             </div>
                             <div class="col-lg-8">
                                 <p class="card-text cardText">@item.EndDate.ToShortDateString()</p>

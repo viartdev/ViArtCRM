@@ -17,9 +17,9 @@ namespace ViArtCRM {
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
-            services.AddMvc();
-            services.AddMemoryCache();
-            services.AddSession();
+            services.AddMvc();            
+            services.AddDistributedMemoryCache();
+            services.AddSession(s => s.IdleTimeout = TimeSpan.FromSeconds(10));
 
             services.Add(new ServiceDescriptor(typeof(Models.TasksContext), new Models.TasksContext(Configuration.GetConnectionString("TasksConnection"))));
             services.Add(new ServiceDescriptor(typeof(Models.TaskModuleContext), new Models.TaskModuleContext(Configuration.GetConnectionString("TasksConnection"))));
@@ -37,10 +37,11 @@ namespace ViArtCRM {
 
             app.UseStaticFiles();
             app.UseSession();
+
             app.UseMvc(routes => {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Scheduler}/{action=Index}/{id?}");                
+                    template: "{controller=Scheduler}/{action=Index}/{id?}");
             });
 
         }
