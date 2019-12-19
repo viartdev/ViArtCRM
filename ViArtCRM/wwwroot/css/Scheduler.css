@@ -19,3 +19,6 @@
 .jumbotron {
     padding: 2rem 2rem !important;
 }
+.moveButton {
+    width: 100%;
+}
