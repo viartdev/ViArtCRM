@@ -20,6 +20,19 @@ namespace ViArtCRM.Controllers {
             return View(context.GetTaskContainer(moduleid));
         }
 
+        [HttpGet, ActionName("LoadModule")]
+        public ActionResult LoadModule(int taskStatus, int moduleID) {
+            TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
+            var tasks = context.GetTasks(taskStatus, moduleID);
+            if (taskStatus == 0)
+                return PartialView("ToDoHolder", tasks);
+            else if (taskStatus == 1)
+                return PartialView("ModerateHolder", tasks);
+            else
+                return PartialView("CompleteHolder", tasks);
+        }
+
+
         public IActionResult Create(TaskObject task) {
             return View(task);
         }
@@ -29,13 +42,13 @@ namespace ViArtCRM.Controllers {
         }
 
         [HttpPost]
-        public ActionResult Move([FromBody]TaskMovingData data, int targetStatus = -1) {            
+        public ActionResult Move([FromBody]TaskMovingData data, int targetStatus = -1) {
             TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
             if (targetStatus == -1)
                 targetStatus = Convert.ToInt32(data.currentTaskStatus) + 1;
             int rowsAffected = context.MoveTask(Convert.ToInt32(data.taskID), Convert.ToInt32(data.currentTaskStatus), targetStatus);
 
-            return Json(String.Format("'RowsAffected':'{0}'", rowsAffected));
+            return Json(String.Format("{{\"success\":\"{0}\"}}", rowsAffected > 0 ? "ok" : "no"));
         }
 
         [HttpPost, ActionName("Edit")]
@@ -43,7 +56,7 @@ namespace ViArtCRM.Controllers {
         public ActionResult EditMethod(TaskObject task) {
             TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
             context.UpdateTask(task);
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { moduleID = task.ModuleID });
         }
 
         [HttpPost, ActionName("Create")]

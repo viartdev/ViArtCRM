@@ -125,7 +125,7 @@ namespace ViArtCRM.Models {
         public void UpdateTask(TaskObject task) {
             using (MySqlConnection conn = GetConnection()) {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("UPDATE Tasks SET(TaskName,TaskDescription,TaskProgress,StartDate,EndDate,TaskStatus, ModuleID) VALUES(@TaskName, @TaskDescription, @TaskProgress, @StartDate, @EndDate, @TaskStatus, @ModuleID) WHERE TaskID = @TaskID", conn);
+                MySqlCommand cmd = new MySqlCommand("UPDATE Tasks SET TaskName=@TaskName,TaskDescription = @TaskDescription,TaskProgress = @TaskProgress, StartDate = @StartDate, EndDate = @EndDate,TaskStatus = @TaskStatus, ModuleID = @ModuleID WHERE TaskID = @TaskID", conn);
                 cmd.Parameters.AddWithValue("@TaskID", task.TaskID);
                 cmd.Parameters.AddWithValue("@TaskName", task.TaskName);
                 cmd.Parameters.AddWithValue("@TaskDescription", task.TaskDescription);
