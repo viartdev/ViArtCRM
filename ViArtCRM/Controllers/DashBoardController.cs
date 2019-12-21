@@ -36,9 +36,9 @@ namespace ViArtCRM.Controllers {
         public IActionResult Create(TaskObject task) {
             return View(task);
         }
-        public IActionResult Edit(TaskObject task) {
+        public IActionResult Edit(int taskID) {
             TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
-            return View(context.GetTaskByID(task.TaskID));
+            return PartialView(context.GetTaskByID(taskID));
         }
 
         [HttpPost]
