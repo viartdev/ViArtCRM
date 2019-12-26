@@ -38,9 +38,24 @@
         margin-top: 10px;
     }
 
+    .subtasks-btn {
+        width: 100%;
+        margin-top: 10px;
+    }
+
     .tabletext {
         padding-top: 20px;
         padding-bottom: 20px
+    }
+    .subtask-content{
+        /*width:30%;*/
+    }
+    .modalless {
+        /*top: 10%;
+        left: 50%;
+        bottom: auto;
+        right: auto;
+        margin-left: -300px;*/
     }
 </style>
 
@@ -84,6 +99,7 @@
         UpdateTimeColoros();
         UpdateMoveButtonsActions();
         UpdateEditButtonsActions();
+        UpdateSubTasksButtons()
     }
 
     function UpdateTimeColoros() {
@@ -130,11 +146,29 @@
             });
         });
     }
-    function UpdateEditButtonsActions() {        
+    function UpdateEditButtonsActions() {
         $('.editButton').on('click',function () {
             var taskID = $(this).data('taskid');
             console.log(taskID);
             var containerName = "modalForm";
+            var string = '@Url.Action("Edit","DashBoard")?taskID=' + taskID;
+            $('#' + containerName).load(string);
+        });
+    }
+    function UpdateSubTasksButtons() {
+        $('.subtasks-btn').on('click',function () {
+            var taskID = $(this).data('taskid');
+            console.log(taskID);
+            var card = $('[data-taskid="' + taskID + '"]')[0];
+            var cardWidth = $(card).width();
+            var cardOffset = {
+                "top": $(card).offset().top,
+                "left": $(card).offset().left + cardWidth
+            }
+            var modal = $('#subtasksContent')[0];            
+            setTimeout(function () { $(modal).offset(cardOffset); }, 20);
+
+            var containerName = "subtasksForm";
             var string = '@Url.Action("Edit","DashBoard")?taskID=' + taskID;
             $('#' + containerName).load(string);
         });
@@ -150,7 +184,7 @@
             @Html.ActionLink("Create A New Task", "Create", "DashBoard", new { moduleID = Model.ModuleID }, new { @class = "btn btn-outline-info btn-large createButton" })
         </div>
     </div>
-    <div id="todoBody" class="row"> 
+    <div id="todoBody" class="row">
     </div>
 </div>
 <div id="moderate-zone" class="jumbotron ">
@@ -159,7 +193,7 @@
             <h1 class="tabletext">In Moderate</h1>
         </div>
     </div>
-    <div id="moderateBody" class="row">      
+    <div id="moderateBody" class="row">
     </div>
 </div>
 <div id="complete-zone" class="jumbotron ">
@@ -168,7 +202,7 @@
             <h1 class="tabletext">Completed</h1>
         </div>
     </div>
-    <div id="completeBody" class="row">      
+    <div id="completeBody" class="row">
     </div>
 </div>
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -181,7 +215,26 @@
                 </button>
             </div>
             <div class="modal-body" id="modalForm">
-                
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade modalless" id="subTusksDialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="false">
+    <div class="modal-dialog" role="document">
+        <div id="subtasksContent" class="modal-content subtask-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="subtasks-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="subtasksForm">
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

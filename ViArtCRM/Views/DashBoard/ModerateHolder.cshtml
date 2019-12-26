@@ -14,7 +14,8 @@
                         @item.TaskName
                     </div>
                     <div class="col-lg-3">
-                        @Html.ActionLink("Edit", "Edit", "DashBoard", item, new { @class = "btn btn-outline-secondary btn-sm editButton" })
+                        @*@Html.ActionLink("Edit", "Edit", "DashBoard", item, new { @class = "btn btn-outline-secondary btn-sm editButton" })*@
+                        <button type="button" class="btn btn-outline-secondary btn-sm editButton" data-toggle="modal" data-target="#exampleModal" data-taskid="@item.TaskID">Edit</button>
 
 
                     </div>

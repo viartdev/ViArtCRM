@@ -6,7 +6,7 @@
 @model List<TaskObject>
 
 @foreach (var item in Model) {
-    <div id="@item.TaskID" class="col-lg-3 draggbleCard" style="padding-bottom: 10px">
+    <div id="@String.Format("Task_{0}",item.TaskID)" class="col-lg-3 draggbleCard" style="padding-bottom: 10px" data-taskID="@item.TaskID">
         <div class="card shadow ">
             <div class="card-header">
                 <div class="row">
@@ -14,8 +14,8 @@
                         @item.TaskName
                     </div>
                     <div class="col-lg-3">
-                        @*@Html.ActionLink("Edit", "Edit", "DashBoard", item, new { @class = "btn btn-outline-secondary btn-sm editButton" })*@
-                        <button  type="button" class="btn btn-outline-secondary btn-sm editButton" data-toggle="modal" data-target="#exampleModal" data-taskid="@item.TaskID">Edit</button>
+                        @*@Html.ActionLink("Edit", "Edit", "DashBoard", item, new { @class = "btn btn-outline-secondary btn-sm editButton" })*@                        
+                        <button type="button" class="btn btn-outline-secondary btn-sm editButton" data-toggle="modal" data-target="#exampleModal" data-taskid="@item.TaskID">Edit</button>
                     </div>
                 </div>
             </div>
@@ -39,6 +39,11 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <p class="card-text cardText">@item.TaskDescription</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <input type="submit" class="btn btn-outline-secondary btn-sm subtasks-btn" data-toggle="modal" data-target="#subTusksDialog" data-taskid="@item.TaskID" value="SubTasks"/>
                     </div>
                 </div>
                 <div class="row">
