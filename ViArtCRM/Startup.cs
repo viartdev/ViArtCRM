@@ -23,6 +23,7 @@ namespace ViArtCRM {
 
             services.Add(new ServiceDescriptor(typeof(Models.TasksContext), new Models.TasksContext(Configuration.GetConnectionString("TasksConnection"))));
             services.Add(new ServiceDescriptor(typeof(Models.TaskModuleContext), new Models.TaskModuleContext(Configuration.GetConnectionString("TasksConnection"))));
+            services.Add(new ServiceDescriptor(typeof(Models.UserContext), new Models.UserContext(Configuration.GetConnectionString("TasksConnection"))));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
