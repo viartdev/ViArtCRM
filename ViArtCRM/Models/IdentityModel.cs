@@ -3,12 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ViArtCRM.HelperTools;
 
-namespace ViArtCRM.Models
-{
-    public class User
-    {
-        public int UserID { get; set; }
+namespace ViArtCRM.Models {
+    public class User {
+        [SQLHelper(DataSourceFieldName = "UserID")]
+        public int UserIDs { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Login { get; set; }
@@ -30,10 +30,13 @@ namespace ViArtCRM.Models
         }
         public List<User> GetUsers() {
             List<User> list = new List<User>();
-            HelperTools.SQLSettings sqlSettings = new HelperTools.SQLSettings();
+            var sqlSettings = new SQLSelectQuerySettings();
             sqlSettings.ConnectionString = ConnectionString;
-            sqlSettings.QueryString = "select * from Users";            
-            list = HelperTools.SQLWrapper.SelectData<User>(sqlSettings);
+            sqlSettings.TableName = "Users";
+            sqlSettings.QueryParams = new Dictionary<string, string>();
+            sqlSettings.QueryParams.Add("UserID", "1");
+
+            list = SQLWrapper.SelectData<User>(sqlSettings);
             return list;
         }
     }

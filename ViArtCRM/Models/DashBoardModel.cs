@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using ViArtCRM.HelperTools;
 
 namespace ViArtCRM.Models {
     public class TaskMovingData {
@@ -22,8 +23,6 @@ namespace ViArtCRM.Models {
     }
     public class TaskObject {
 
-        private TasksContext context;
-
         public int TaskID { get; set; }
 
         public string TaskName { get; set; }
@@ -36,12 +35,13 @@ namespace ViArtCRM.Models {
 
         public DateTime EndDate { get; set; }
 
+        [SQLHelper(IsDataSourceField = false)]
         public bool IsComplete {
             get {
                 return TaskProgress >= 100;
             }
         }
-
+        [SQLHelper(DataSourceFieldName = "TaskStatus")]
         public int Status { get; set; }
 
         public int ModuleID { get; set; }
@@ -69,43 +69,37 @@ namespace ViArtCRM.Models {
             return taskContainer;
         }
         public TaskObject GetTaskByID(int id) {
-            var tasks = GetTasks();
-            return tasks.First(s => s.TaskID == id);
+            List<TaskObject> list = new List<TaskObject>();
+            SQLSelectQuerySettings sqlSelectQuerySettings = new SQLSelectQuerySettings {
+                ConnectionString = this.ConnectionString,
+                TableName = "Tasks",
+                QueryParams = new Dictionary<string, string>() { { "TaskID", id.ToString() } }
+            };
+
+            list = SQLWrapper.SelectData<TaskObject>(sqlSelectQuerySettings);
+
+            return list.First(s => s.TaskID == id);
         }
 
-        string GetQueryString(int taskStatus, int moduleID) {
-            string qrStr;
-            if (taskStatus == -1 && moduleID == -1) {
-                qrStr = String.Format("select * from Tasks", taskStatus, moduleID);
-            }
-            else {
-                qrStr = String.Format("select * from Tasks where TaskStatus = {0} and ModuleID = {1}", taskStatus, moduleID);
-            }
-            return qrStr;
-
+        Dictionary<string, string> GetQueryParams(int taskStatus, int moduleID) {
+            if (moduleID == -1 && taskStatus == -1)
+                return null;
+            var queryParams = new Dictionary<string, string>();
+            if (taskStatus != -1)
+                queryParams.Add("TaskStatus", taskStatus.ToString());
+            if (moduleID != -1)
+                queryParams.Add("ModuleID", moduleID.ToString());
+            return queryParams;
         }
         public List<TaskObject> GetTasks(int taskStatus = -1, int moduleID = -1) {
             List<TaskObject> list = new List<TaskObject>();
-            using (MySqlConnection conn = GetConnection()) {
-                conn.Open();
-                string queryString = GetQueryString(taskStatus, moduleID);
-                MySqlCommand cmd = new MySqlCommand(queryString, conn);
+            SQLSelectQuerySettings sqlSelectQuerySettings = new SQLSelectQuerySettings {
+                ConnectionString = this.ConnectionString,
+                TableName = "Tasks",
+                QueryParams = GetQueryParams(taskStatus, moduleID)
+            };
 
-                using (var reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) {
-                        list.Add(new TaskObject() {
-                            TaskID = Convert.ToInt32(reader["TaskID"]),
-                            TaskName = reader["TaskName"].ToString(),
-                            TaskDescription = reader["TaskDescription"].ToString(),
-                            TaskProgress = Convert.ToInt32(reader["TaskProgress"]),
-                            StartDate = Convert.ToDateTime(reader["StartDate"]),
-                            EndDate = Convert.ToDateTime(reader["EndDate"]),
-                            Status = Convert.ToInt32(reader["TaskStatus"]),
-                            ModuleID = Convert.ToInt32(reader["ModuleID"])
-                        });
-                    }
-                }
-            }
+            list = SQLWrapper.SelectData<TaskObject>(sqlSelectQuerySettings);
             return list;
         }
         public void InsertTask(TaskObject task) {
