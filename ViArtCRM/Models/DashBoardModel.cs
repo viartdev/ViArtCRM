@@ -47,6 +47,17 @@ namespace ViArtCRM.Models {
         public int ModuleID { get; set; }
     }
 
+    public class SubTask
+    {
+        public int SubTaskID { get; set; }
+
+        public string SubTaskName { get; set; }
+
+        public bool isComplete { get; set; }
+
+        public int TaskID { get; set; }
+    }
+
     public class TasksContext {
         public string ConnectionString { get; set; }
 
@@ -91,6 +102,16 @@ namespace ViArtCRM.Models {
                 queryParams.Add("ModuleID", moduleID.ToString());
             return queryParams;
         }
+        Dictionary<string, string> GetQueryParamsSubTasks(int taskID)
+        {
+            if (taskID == -1)
+                return null;
+            var queryParams = new Dictionary<string, string>();
+            if (taskID != -1)
+                queryParams.Add("TaskID", taskID.ToString());
+           
+            return queryParams;
+        }
         public List<TaskObject> GetTasks(int taskStatus = -1, int moduleID = -1) {
             List<TaskObject> list = new List<TaskObject>();
             SQLSelectQuerySettings sqlSelectQuerySettings = new SQLSelectQuerySettings {
@@ -100,6 +121,19 @@ namespace ViArtCRM.Models {
             };
 
             list = SQLWrapper.SelectData<TaskObject>(sqlSelectQuerySettings);
+            return list;
+        }
+        public List<SubTask> GetSubTasks(int taskID = -1)
+        {
+            List<SubTask> list = new List<SubTask>();
+            SQLSelectQuerySettings sqlSelectQuerySettings = new SQLSelectQuerySettings
+            {
+                ConnectionString = this.ConnectionString,
+                TableName = "SubTasks",
+                QueryParams = GetQueryParamsSubTasks(taskID)
+            };
+
+            list = SQLWrapper.SelectData<SubTask>(sqlSelectQuerySettings);
             return list;
         }
         public void InsertTask(TaskObject task) {

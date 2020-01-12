@@ -93,7 +93,7 @@
     function RefreshContainer(containerNumber, moduleID, taskStatus) {
         var containerName = GetContainerName(containerNumber);
         var string = '@Url.Action("LoadModule","DashBoard")?taskStatus=' + taskStatus + '&moduleID=' + moduleID;
-        $('#' + containerName).load(string, UpdateModuleAfterAjax);
+        $('#' + containerName).hide().load(string, UpdateModuleAfterAjax).fadeIn('1000');
     }
     function UpdateModuleAfterAjax() {
         UpdateTimeColoros();
@@ -169,7 +169,7 @@
             setTimeout(function () { $(modal).offset(cardOffset); }, 20);
 
             var containerName = "subtasksForm";
-            var string = '@Url.Action("Edit","DashBoard")?taskID=' + taskID;
+            var string = '@Url.Action("ShowSubTasks","DashBoard")?taskID=' + taskID;
             $('#' + containerName).load(string);
         });
     }
@@ -228,7 +228,7 @@
     <div class="modal-dialog" role="document">
         <div id="subtasksContent" class="modal-content subtask-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="subtasks-title"></h5>
+                <h5 class="modal-title" id="subtasks-title">SubTasks</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
