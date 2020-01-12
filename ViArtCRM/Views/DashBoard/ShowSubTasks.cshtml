@@ -5,10 +5,26 @@
 
 @model List<SubTask>
 
-@foreach (var item in Model)
-{   <div class="col-lg-12">
-        <input type="checkbox" class="form-check-input" id="Check1">
-        <label class="form-check-label">@item.SubTaskName</label>
 
-    </div>
-}
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">SubTask Name</th>
+                <th scope="col">Completed</th>
+        
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+
+                <tr>
+                    <th scope="row">@item.TaskID</th>
+                    <td>@item.SubTaskName</td>
+                    <td><input type="checkbox" id="Check1"></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
