@@ -93,7 +93,7 @@
     function RefreshContainer(containerNumber, moduleID, taskStatus) {
         var containerName = GetContainerName(containerNumber);
         var string = '@Url.Action("LoadModule","DashBoard")?taskStatus=' + taskStatus + '&moduleID=' + moduleID;
-        $('#' + containerName).hide().load(string, UpdateModuleAfterAjax).fadeIn('1000');
+        $('#' + containerName).hide().load(string, UpdateModuleAfterAjax).fadeIn('5000');
     }
     function UpdateModuleAfterAjax() {
         UpdateTimeColoros();

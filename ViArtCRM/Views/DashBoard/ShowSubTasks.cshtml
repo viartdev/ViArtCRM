@@ -6,25 +6,68 @@
 @model List<SubTask>
 
 
-    <table class="table table-bordered table-hover">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">SubTask Name</th>
-                <th scope="col">Completed</th>
-        
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+<style>
+    .newRowElementHidden {
+        display: none;
+    }
+</style>
+<script>
+    function NewButtonClick(event) {
+        var newRowElement = $('.newRowElement');
+        newRowElement.removeClass("newRowElementHidden");
+    }
+    function RefreshSubtasksContainer(taskID) {
+        var containerName = "subtasksForm";
+        var string = '@Url.Action("ShowSubTasks","DashBoard")?taskID=' + taskID;
+        $('#' + containerName).load(string);
+    }
+    $('.updateSubTasksButton').click(function (e) {        
+        e.preventDefault();
+        console.log("click");
+        var data = {
+            taskID: $(this).data("taskid")
+        };
+        $.ajax({
+            url: '/DashBoard/UpdateSubTask',
+            type: 'POST',
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            dataType: 'json',
+            error: function (xhr) {
+                alert('Error: ' + xhr.statusText);
+            },
+            success: function (result) {
+                RefreshContainer($(this).data("taskid"));
+            },
+            async: true,
+            processData: false
+        });
+    });
+</script>
 
-                <tr>
-                    <th scope="row">@item.TaskID</th>
-                    <td>@item.SubTaskName</td>
-                    <td><input type="checkbox" id="Check1"></td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th scope="col"><button type="button" class="btn btn-outline-secondary btn-sm newSubTaskButton" onclick="javascript:NewButtonClick(event)">New</button></th>
+            <th scope="col">SubTask Name</th>
+            <th scope="col">Completed</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="newRowElement newRowElementHidden">
+            <td>Name:</td>
+            <td><input type="text" id="subTaskName" style="width:100%" /></td>
+            <td><button type="button" class="btn btn-outline-secondary btn-sm updateSubTasksButton" data-taskid="@Model[0].TaskID">Update</button></td>
+        </tr>
+
+        @for (int i = 0; i < Model.Count; i++) {
+            <tr>
+                <th scope="row">@i</th>
+                <td>@Model[i].SubTaskName</td>
+                <td><input type="checkbox" id="Check1" checked="@Model[i].isComplete"></td>
+            </tr>
+        }
+    </tbody>
+</table>
 
