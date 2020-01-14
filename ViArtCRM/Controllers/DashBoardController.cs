@@ -52,7 +52,8 @@ namespace ViArtCRM.Controllers {
             TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
             if (targetStatus == -1)
                 targetStatus = Convert.ToInt32(data.currentTaskStatus) + 1;
-            int rowsAffected = context.MoveTask(Convert.ToInt32(data.taskID), Convert.ToInt32(data.currentTaskStatus), targetStatus);
+            int rowsAffected = 1;
+            context.MoveTask(Convert.ToInt32(data.taskID), Convert.ToInt32(data.currentTaskStatus), targetStatus);
 
             return Json(String.Format("{{\"success\":\"{0}\"}}", rowsAffected > 0 ? "ok" : "no"));
         }

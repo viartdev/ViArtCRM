@@ -22,7 +22,7 @@ namespace ViArtCRM.Models {
 
     }
     public class TaskObject {
-
+        [SQLHelper(IsKeyField = true)]
         public int TaskID { get; set; }
 
         public string TaskName { get; set; }
@@ -47,8 +47,7 @@ namespace ViArtCRM.Models {
         public int ModuleID { get; set; }
     }
 
-    public class SubTask
-    {
+    public class SubTask {
         public int SubTaskID { get; set; }
 
         public string SubTaskName { get; set; }
@@ -102,14 +101,13 @@ namespace ViArtCRM.Models {
                 queryParams.Add("ModuleID", moduleID.ToString());
             return queryParams;
         }
-        Dictionary<string, string> GetQueryParamsSubTasks(int taskID)
-        {
+        Dictionary<string, string> GetQueryParamsSubTasks(int taskID) {
             if (taskID == -1)
                 return null;
             var queryParams = new Dictionary<string, string>();
             if (taskID != -1)
                 queryParams.Add("TaskID", taskID.ToString());
-           
+
             return queryParams;
         }
         public List<TaskObject> GetTasks(int taskStatus = -1, int moduleID = -1) {
@@ -123,11 +121,9 @@ namespace ViArtCRM.Models {
             list = SQLWrapper.SelectData<TaskObject>(sqlSelectQuerySettings);
             return list;
         }
-        public List<SubTask> GetSubTasks(int taskID = -1)
-        {
+        public List<SubTask> GetSubTasks(int taskID = -1) {
             List<SubTask> list = new List<SubTask>();
-            SQLSelectQuerySettings sqlSelectQuerySettings = new SQLSelectQuerySettings
-            {
+            SQLSelectQuerySettings sqlSelectQuerySettings = new SQLSelectQuerySettings {
                 ConnectionString = this.ConnectionString,
                 TableName = "SubTasks",
                 QueryParams = GetQueryParamsSubTasks(taskID)
@@ -137,43 +133,41 @@ namespace ViArtCRM.Models {
             return list;
         }
         public void InsertTask(TaskObject task) {
-            using (MySqlConnection conn = GetConnection()) {
-                conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO Tasks(TaskName,TaskDescription,TaskProgress,StartDate,EndDate,TaskStatus,ModuleID) VALUES(@TaskName, @TaskDescription, @TaskProgress, @StartDate, @EndDate, @TaskStatus, @ModuleID)", conn);
-                cmd.Parameters.AddWithValue("@TaskName", task.TaskName);
-                cmd.Parameters.AddWithValue("@TaskDescription", task.TaskDescription);
-                cmd.Parameters.AddWithValue("@TaskProgress", 0);
-                cmd.Parameters.AddWithValue("@StartDate", task.StartDate);
-                cmd.Parameters.AddWithValue("@EndDate", task.EndDate);
-                cmd.Parameters.AddWithValue("@TaskStatus", 0);
-                cmd.Parameters.AddWithValue("@ModuleID", task.ModuleID);
-                cmd.ExecuteNonQuery();
-            }
+            SQLInsertQuerySettings sqlInsertQuerySettings = new SQLInsertQuerySettings() {
+                TableName = "Tasks",
+                ConnectionString = this.ConnectionString
+            };
+            SQLWrapper.InsertData<TaskObject>(task, sqlInsertQuerySettings);
         }
         public void UpdateTask(TaskObject task) {
-            using (MySqlConnection conn = GetConnection()) {
-                conn.Open();
-                MySqlCommand cmd = new MySqlCommand("UPDATE Tasks SET TaskName=@TaskName,TaskDescription = @TaskDescription,TaskProgress = @TaskProgress, StartDate = @StartDate, EndDate = @EndDate,TaskStatus = @TaskStatus, ModuleID = @ModuleID WHERE TaskID = @TaskID", conn);
-                cmd.Parameters.AddWithValue("@TaskID", task.TaskID);
-                cmd.Parameters.AddWithValue("@TaskName", task.TaskName);
-                cmd.Parameters.AddWithValue("@TaskDescription", task.TaskDescription);
-                cmd.Parameters.AddWithValue("@TaskProgress", task.TaskProgress);
-                cmd.Parameters.AddWithValue("@StartDate", task.StartDate);
-                cmd.Parameters.AddWithValue("@EndDate", task.EndDate);
-                cmd.Parameters.AddWithValue("@TaskStatus", task.Status);
-                cmd.Parameters.AddWithValue("@ModuleID", task.ModuleID);
-                cmd.ExecuteNonQuery();
-            }
+            SQLUpdateQuerySettings sqlUpdateQuerySettings = new SQLUpdateQuerySettings() {
+                ConnectionString = this.ConnectionString,
+                TableName = "Tasks"
+            };
+            SQLWrapper.UpdateData<TaskObject>(task, sqlUpdateQuerySettings);
         }
-        public int MoveTask(int taskID, int currentTaskStatus, int targetStatus) {
-            using (MySqlConnection conn = GetConnection()) {
-                conn.Open();
-                MySqlCommand cmd = new MySqlCommand("UPDATE Tasks SET TaskStatus = @TaskStatus WHERE TaskID = @TaskID", conn);
-                cmd.Parameters.AddWithValue("@TaskID", taskID);
-                cmd.Parameters.AddWithValue("@TaskStatus", targetStatus);
-                int rowsAffected = cmd.ExecuteNonQuery();
-                return rowsAffected;
-            }
+        public void MoveTask(int taskID, int currentTaskStatus, int targetStatus) {
+            SQLUpdateQuerySettings sqlUpdateQuerySettings = new SQLUpdateQuerySettings {
+                ConnectionString = this.ConnectionString,
+                TableName = "Tasks",
+                QueryParams = new Dictionary<string, string> {
+                    {"TaskStatus",targetStatus.ToString()}
+                },
+                WhereParams = new Dictionary<string, string> {
+                    {"TaskID",taskID.ToString() }
+                }
+            };
+
+            SQLWrapper.UpdateData(sqlUpdateQuerySettings);
+
+            //using (MySqlConnection conn = GetConnection()) {
+            //    conn.Open();
+            //    MySqlCommand cmd = new MySqlCommand("UPDATE Tasks SET TaskStatus = @TaskStatus WHERE TaskID = @TaskID", conn);
+            //    cmd.Parameters.AddWithValue("@TaskID", taskID);
+            //    cmd.Parameters.AddWithValue("@TaskStatus", targetStatus);
+            //    int rowsAffected = cmd.ExecuteNonQuery();
+            //    return rowsAffected;
+            //}
         }
 
     }
