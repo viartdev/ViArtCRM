@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using ViArtCRM.Models;
 
 namespace ViArtCRM.Controllers
 {
@@ -10,7 +11,8 @@ namespace ViArtCRM.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            ChatContext context = HttpContext.RequestServices.GetService(typeof(ChatContext)) as ChatContext;
+            return View(context.GetGroupsContainer());
         }
     }
 }

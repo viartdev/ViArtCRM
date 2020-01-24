@@ -94,6 +94,8 @@ namespace ViArtCRM.Models {
         Dictionary<string, string> GetQueryParams(int taskStatus, int moduleID) {
             if (moduleID == -1 && taskStatus == -1)
                 return null;
+
+
             var queryParams = new Dictionary<string, string>();
             if (taskStatus != -1)
                 queryParams.Add("TaskStatus", taskStatus.ToString());
