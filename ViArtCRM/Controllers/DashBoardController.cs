@@ -58,6 +58,16 @@ namespace ViArtCRM.Controllers {
             return Json(String.Format("{{\"success\":\"{0}\"}}", rowsAffected > 0 ? "ok" : "no"));
         }
 
+        [HttpPost]
+        public ActionResult UpdateSubTask([FromBody]SubTaskMovingData data)
+        {
+            TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
+            int rowsAffected = 1;
+            context.UpdateSubTask(Convert.ToInt32(data.taskID), data.SubTaskName);
+
+            return Json(String.Format("{{\"success\":\"{0}\"}}", rowsAffected > 0 ? "ok" : "no"));
+        }
+
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
         public ActionResult EditMethod(TaskObject task) {

@@ -23,9 +23,9 @@
     }
     $('.updateSubTasksButton').click(function (e) {        
         e.preventDefault();
-        console.log("click");
         var data = {
-            taskID: $(this).data("taskid")
+            taskID: $(this).data("taskid"),
+            SubTaskName: $(".subTaskName").val(),
         };
         $.ajax({
             url: '/DashBoard/UpdateSubTask',
@@ -37,12 +37,36 @@
                 alert('Error: ' + xhr.statusText);
             },
             success: function (result) {
-                RefreshContainer($(this).data("taskid"));
+                var taskID = $(this).data("taskid");
+                RefreshSubtasksContainer(data.taskID);
             },
             async: true,
             processData: false
         });
     });
+
+    $(document).ready(function () {
+
+        updateChecked();
+
+    });
+     function updateChecked() {
+        $(".CheckSub").each(function () {
+
+            var checkedNum = $(this).data("checked");
+            console.log(checkedNum);
+            if (checkedNum == 1) {
+
+                console.log("true");
+                $(this).attr('checked', true);
+            }
+            else {
+                console.log("false");
+
+                $(this).attr('checked', false);
+            }
+            });
+     }
 </script>
 
 <table class="table table-bordered table-hover">
@@ -57,7 +81,7 @@
     <tbody>
         <tr class="newRowElement newRowElementHidden">
             <td>Name:</td>
-            <td><input type="text" id="subTaskName" style="width:100%" /></td>
+            <td><input type="text" class="subTaskName" style="width:100%" /></td>
             <td><button type="button" class="btn btn-outline-secondary btn-sm updateSubTasksButton" data-taskid="@Model[0].TaskID">Update</button></td>
         </tr>
 
@@ -65,8 +89,8 @@
             <tr>
                 <th scope="row">@i</th>
                 <td>@Model[i].SubTaskName</td>
-                <td><input type="checkbox" id="Check1" checked="@Model[i].isComplete"></td>
-            </tr>
+                <td><input type="checkbox" class="CheckSub" data-checked="@Model[i].isComplete" ></td>
+           </tr>
         }
     </tbody>
 </table>

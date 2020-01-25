@@ -14,6 +14,15 @@ namespace ViArtCRM.Models {
         public string currentTaskStatus { get; set; }
     }
 
+    public class SubTaskMovingData
+    {
+        [DataMember(Name = "taskID")]
+        public string taskID { get; set; }
+        [DataMember(Name = "SubTaskName")]
+        public string SubTaskName { get; set; }
+    }
+
+
     public class TaskContainer {
         public int ModuleID { get; set; }
         public List<TaskObject> ToDoTasks { get; set; }
@@ -52,7 +61,7 @@ namespace ViArtCRM.Models {
 
         public string SubTaskName { get; set; }
 
-        public bool isComplete { get; set; }
+        public int isComplete { get; set; }
 
         public int TaskID { get; set; }
     }
@@ -134,6 +143,22 @@ namespace ViArtCRM.Models {
             list = SQLWrapper.SelectData<SubTask>(sqlSelectQuerySettings);
             return list;
         }
+
+        public void UpdateSubTask (int taskID, string subTaskName)
+        {
+            SubTask subTask = new SubTask();
+            subTask.isComplete = 0;
+            subTask.SubTaskName = subTaskName;
+            subTask.TaskID = taskID;
+            SQLInsertQuerySettings sqlInsertQuerySettings = new SQLInsertQuerySettings()
+            {
+                TableName = "SubTasks",
+                ConnectionString = this.ConnectionString
+            };
+            SQLWrapper.InsertData<SubTask>(subTask, sqlInsertQuerySettings);
+        }
+    
+
         public void InsertTask(TaskObject task) {
             SQLInsertQuerySettings sqlInsertQuerySettings = new SQLInsertQuerySettings() {
                 TableName = "Tasks",
