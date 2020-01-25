@@ -1,0 +1,25 @@
+﻿@model ViArtCRM.Models.GroupContainer
+
+@{
+    Layout = null;
+}
+
+
+@foreach (var item in Model.groupMessageList)
+{
+    <div class="list-group rounded-0 groupclick" data-groupid="@item.groupObject.GroupID">
+
+        <a href="#" class="list-group-item list-group-item-action list-group-item-light rounded-0">
+            <div class="media">
+                <img style="width:50px; height:50px" src="https://www.hoffmann-group.com/medias/sys_master/images/images/h2e/hea/9544318124062/Pikto-UeberUns.jpg" alt="user" width="50" class="rounded-circle">
+                <div class="media-body ml-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h6 class="mb-0">@item.groupObject.GroupName</h6><small class="small font-weight-bold">@item.messageObject.MessageDate</small>
+                    </div>
+                    <p class="font-italic text-muted mb-0 text-small">@item.messageObject.MessageText</p>
+                </div>
+            </div>
+        </a>
+
+    </div>
+}

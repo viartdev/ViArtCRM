@@ -8,7 +8,7 @@ using ViArtCRM.HelperTools;
 namespace ViArtCRM.Models {
     public class User {
         [SQLHelper(DataSourceFieldName = "UserID")]
-        public int UserIDs { get; set; }
+        public int UserID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Login { get; set; }
@@ -38,6 +38,21 @@ namespace ViArtCRM.Models {
 
             list = SQLWrapper.SelectData<User>(sqlSettings);
             return list;
+        }
+
+       public User GetUserByID(int userID)
+        {
+            List<User> list = new List<User>();
+            SQLSelectQuerySettings sqlSelectQuerySettings = new SQLSelectQuerySettings
+            {
+                ConnectionString = this.ConnectionString,
+                TableName = "Users",
+                QueryParams = new Dictionary<string, string>() { { "UserID", userID.ToString() } }
+            };
+
+            list = SQLWrapper.SelectData<User>(sqlSelectQuerySettings);
+
+            return list.First(s => s.UserID == userID);
         }
     }
 }

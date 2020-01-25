@@ -12,7 +12,25 @@ namespace ViArtCRM.Controllers
         public IActionResult Index()
         {
             ChatContext context = HttpContext.RequestServices.GetService(typeof(ChatContext)) as ChatContext;
-            return View(context.GetGroupsContainer());
+            return View();
         }
+
+   
+        public IActionResult LoadGroup()
+        {
+            ChatContext context = HttpContext.RequestServices.GetService(typeof(ChatContext)) as ChatContext;
+            var groups = context.GetGroupsContainer();
+
+            return PartialView("ChatGroup", groups);
+        }
+
+        public IActionResult LoadMessages(int groupID)
+        {
+            ChatContext context = HttpContext.RequestServices.GetService(typeof(ChatContext)) as ChatContext;
+            var messages = context.getMessagesByGroupID(groupID);
+
+            return PartialView("ChatMessages", messages);
+        }
+
     }
 }

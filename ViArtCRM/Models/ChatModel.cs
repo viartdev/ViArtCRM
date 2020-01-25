@@ -24,6 +24,7 @@ namespace ViArtCRM.Models
         public int GroupID { get; set; }
     }
 
+    
 
     public class GroupMessage
     {
@@ -41,6 +42,17 @@ namespace ViArtCRM.Models
     { 
         public List<GroupMessage> groupMessageList { get; set; }
     }
+    public class MessagePacket
+    {
+        public MessageObject messageObject { get; set; }
+        public User userObject { get; set; }                                                       // REWRITE THIS PART WHEN USERS WILL BE CREATED
+    }
+    public class MessagesContainer
+    {
+        public List<MessagePacket> messages { get; set; }
+        public int currentUserID { get; set; }
+ 
+    }
     public class ChatContext
     {
         public string ConnectionString { get; set; }
@@ -50,6 +62,37 @@ namespace ViArtCRM.Models
             GroupContainer groupContainer = new GroupContainer();
             groupContainer.groupMessageList = GetGroup(userID);
             return groupContainer;
+        }
+
+        public MessagesContainer getMessagesByGroupID(int groupID)
+        {
+            List<MessageObject> list = new List<MessageObject>();
+            MessagesContainer messagesContainer = new MessagesContainer();
+            SQLSelectQuerySettings sqlSelectQuerySettings = new SQLSelectQuerySettings
+            {
+                ConnectionString = this.ConnectionString,
+                TableName = "ChatMessages",
+                QueryParams = new Dictionary<string, string>() { { "GroupID", groupID.ToString() } }
+            };
+            list = SQLWrapper.SelectData<MessageObject>(sqlSelectQuerySettings);
+            List<MessagePacket> packetList = new List<MessagePacket>(); 
+            foreach(MessageObject message in list)
+            {
+                MessagePacket messagePacket = new MessagePacket();
+                User user = getUserByID(message.UserID);
+                messagePacket.messageObject = message;
+                messagePacket.userObject = user;
+                packetList.Add(messagePacket);
+            }
+            messagesContainer.messages = packetList;
+            messagesContainer.currentUserID = 1;                                                        //userID
+            return messagesContainer;
+        }
+        public User getUserByID(int userID)
+        {
+            UserContext userContext = new UserContext(ConnectionString);
+            User user = userContext.GetUserByID(userID);
+            return user;
         }
         public ChatContext(string connectionString)
         {
