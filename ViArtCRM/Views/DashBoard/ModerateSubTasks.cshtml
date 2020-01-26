@@ -18,10 +18,10 @@
     }
     function RefreshSubtasksContainer(taskID) {
         var containerName = "subtasksForm";
-        var string = '@Url.Action("ToDoSubTasks", "DashBoard")?taskID=' + taskID;
+        var string = '@Url.Action("ModerateSubTasks", "DashBoard")?taskID=' + taskID;
         $('#' + containerName).load(string);
     }
-    $('.updateSubTasksButton').click(function (e) {        
+    $('.updateSubTasksButton').click(function (e) {
         e.preventDefault();
         var data = {
             taskID: $(this).data("taskid"),
@@ -85,13 +85,15 @@
             <td><button type="button" class="btn btn-outline-secondary btn-sm updateSubTasksButton" data-taskid="@Model[0].TaskID">Update</button></td>
         </tr>
 
-        @for (int i = 0; i < Model.Count; i++) {
+        @for (int i = 0; i < Model.Count; i++)
+        {
             <tr>
                 <th scope="row">@i</th>
                 <td>@Model[i].SubTaskName</td>
-                <td><input type="checkbox" class="CheckSub" data-checked="@Model[i].isComplete" ></td>
-           </tr>
+                <td><input type="checkbox" class="CheckSub" data-checked="@Model[i].isComplete"></td>
+            </tr>
         }
+
     </tbody>
 </table>
-
+<button class=" btn btn-outline-danger " style="width:100%" value="">Refresh</button>

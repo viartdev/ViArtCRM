@@ -24,6 +24,34 @@ namespace ViArtCRM.Controllers {
         public ActionResult LoadModule(int taskStatus, int moduleID) {
             TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
             var tasks = context.GetTasks(taskStatus, moduleID);
+            
+            int i = 0;
+            foreach(var task in tasks)
+            {
+                if(task.TaskID == 3)
+                {
+                    task.TaskProgress = 10;
+                }
+                double nCompleted = 0;
+                double count = 0;
+                List<SubTask> subTasks = context.GetSubTasks(task.TaskID);
+                foreach(var subtask in subTasks)
+                {
+                    if(subtask.isComplete == 1)
+                    {
+                        nCompleted += 1;
+                    }
+                    count += 1;
+                }
+                double progress = 0;
+                if(count != 0) {
+                    double procents = nCompleted / count;
+                    progress = procents * 100;
+                }
+                var progressRounded = (int)Math.Round(progress);
+                tasks[i].TaskProgress = progressRounded;
+                i += 1;
+            }
             if (taskStatus == 0)
                 return PartialView("ToDoHolder", tasks);
             else if (taskStatus == 1)
@@ -56,6 +84,15 @@ namespace ViArtCRM.Controllers {
 
         public IActionResult ModerateSubTasks(int taskID) {
             TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
+            var list = context.GetSubTasks(taskID);
+            if (list.Count == 0)
+            {
+                list.Add(new SubTask
+                {
+                    TaskID = taskID
+                });
+                return PartialView("EmptySubTasks", list);
+            }
             return PartialView(context.GetSubTasks(taskID));
         }
 
