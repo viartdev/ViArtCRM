@@ -169,7 +169,7 @@
             setTimeout(function () { $(modal).offset(cardOffset); }, 20);
 
             var containerName = "subtasksForm";
-            var string = '@Url.Action("ShowSubTasks","DashBoard")?taskID=' + taskID;
+            var string = '@Url.Action("ToDoSubTasks", "DashBoard")?taskID=' + taskID;
             $('#' + containerName).load(string);
         });
     }

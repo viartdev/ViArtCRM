@@ -36,13 +36,25 @@ namespace ViArtCRM.Controllers {
         public IActionResult Create(TaskObject task) {
             return View(task);
         }
-        public IActionResult Edit(int taskID)
-        {
+        public IActionResult Edit(int taskID) {
             TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
             return PartialView(context.GetTaskByID(taskID));
         }
-        public IActionResult ShowSubTasks(int taskID)
+        
+        public IActionResult ToDoSubTasks(int taskID)
         {
+            TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
+            var list = context.GetSubTasks(taskID);
+            if (list.Count == 0) {
+                list.Add(new SubTask {
+                    TaskID = taskID
+                });
+                return PartialView("EmptySubTasks", list);
+            }
+            return PartialView(context.GetSubTasks(taskID));
+        }
+
+        public IActionResult ModerateSubTasks(int taskID) {
             TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
             return PartialView(context.GetSubTasks(taskID));
         }
