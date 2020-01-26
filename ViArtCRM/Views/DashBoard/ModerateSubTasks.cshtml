@@ -10,6 +10,18 @@
     .newRowElementHidden {
         display: none;
     }
+    .hoverCompleted{
+        background-color:#7bda7b66;
+    }
+    .completed{
+        background-color: #36da3666;
+    }
+    .hoverUncompleted{
+        background-color:#ffb6b666;
+    }
+    .uncompleted{
+        background-color: #ff6e6e66;
+    }
 </style>
 <script>
     function NewButtonClick(event) {
@@ -66,10 +78,102 @@
                 $(this).attr('checked', false);
             }
             });
-     }
+    }
+
+    $(".subtask-div").hover(function () {
+        if ($(this).hasClass("completed")) { 
+        $(this).addClass("hoverCompleted");
+        $(this).removeClass("completed");
+        }
+         if ($(this).hasClass("uncompleted")) { 
+        $(this).addClass("hoverUncompleted");
+        $(this).removeClass("uncompleted");
+        }
+        
+    },
+    function () {
+        if ($(this).hasClass("hoverCompleted")) { 
+        $(this).addClass("completed");
+        $(this).removeClass("hoverCompleted");
+        }
+         if ($(this).hasClass("hoverUncompleted")) { 
+        $(this).addClass("uncompleted");
+        $(this).removeClass("hoverUncompleted");
+        }
+        });
+
+
+
+     $('.subtask-div').click(function (e) {
+         e.preventDefault();
+         var taskID = $(this).data("taskid");
+        var willComplete = 1;
+        if ($(this).hasClass("completed") || $(this).hasClass("hoverCompleted")) {
+            willComplete = 0;
+        }
+        var data = {
+            subTaskID: $(this).data("subtaskid"),
+            newComplete: willComplete
+        };
+        $.ajax({
+            url: '/DashBoard/recompleteSubTask',
+            type: 'POST',
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            dataType: 'json',
+            error: function (xhr) {
+                alert('Error: ' + xhr.statusText);
+            },
+            success: function (result) {
+                
+                RefreshSubtasksContainer(taskID);
+            },
+            async: true,
+            processData: false
+        });
+    });
+
 </script>
 
-<table class="table table-bordered table-hover">
+
+
+<div>
+    <button type="button" class="btn btn-outline-secondary btn-sm newSubTaskButton" style="width:100%;" onclick="javascript:NewButtonClick(event)">New</button>
+    
+    <div class="border border-info newRowElement newRowElementHidden" style="padding:10px; border-radius:5px; margin: 5px;">
+        <p style="color:black;">Name:</p>
+        <input type="text" class="subTaskName" style="width:80%" />
+        <button type="button" class="btn btn-outline-secondary btn-sm updateSubTasksButton" data-taskid="@Model[0].TaskID">Update</button>
+    </div>
+
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        if (Model[i].isComplete == 1)
+        {
+            <div class="border border-success subtask-div completed "  data-subtaskid="@Model[i].SubTaskID" data-taskid="@Model[i].TaskID" style="margin: 5px; text-align: center; ">
+                <p style="margin-top: 5px;">@Model[i].SubTaskName</p>
+            </div>
+        }
+        else
+        {
+            <div class="border border-danger subtask-div uncompleted" data-subtaskid="@Model[i].SubTaskID" data-taskid="@Model[i].TaskID" style="margin: 5px; text-align: center;">
+                <p style="margin-top: 5px;">@Model[i].SubTaskName</p>
+            </div>
+        }
+
+
+    }
+
+
+
+</div>
+
+
+
+
+
+
+@*<table class="table table-borderless table-hover">
     <thead>
         <tr>
             <th scope="col"><button type="button" class="btn btn-outline-secondary btn-sm newSubTaskButton" onclick="javascript:NewButtonClick(event)">New</button></th>
@@ -87,7 +191,7 @@
 
         @for (int i = 0; i < Model.Count; i++)
         {
-            <tr>
+            <tr >
                 <th scope="row">@i</th>
                 <td>@Model[i].SubTaskName</td>
                 <td><input type="checkbox" class="CheckSub" data-checked="@Model[i].isComplete"></td>
@@ -95,5 +199,4 @@
         }
 
     </tbody>
-</table>
-<button class=" btn btn-outline-danger " style="width:100%" value="">Refresh</button>
+</table>*@

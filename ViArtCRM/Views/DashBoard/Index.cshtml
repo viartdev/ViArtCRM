@@ -99,7 +99,8 @@
         UpdateTimeColoros();
         UpdateMoveButtonsActions();
         UpdateEditButtonsActions();
-        UpdateSubTasksButtons()
+        UpdateSubTasksButtons();
+        updateCloseButton();
     }
 
     function UpdateTimeColoros() {
@@ -189,6 +190,11 @@
             $('#' + containerName).load(string);
         });
     }
+    function updateCloseButton() {
+        $(".closeSubTask").on("click", function () {
+            RefreshContainer(1,@Model.ModuleID, 1);
+        });
+    }
 </script>
 
 <div id="todo-zone" class="jumbotron ">
@@ -241,10 +247,10 @@
 </div>
 <div class="modal fade modalless border border-warning" id="subTusksDialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="false">
     <div class="modal-dialog" role="document">
-        <div id="subtasksContent" class="modal-content subtask-content">
+        <div id="subtasksContent" class="modal-content subtask-content" style="background-color: rgb(255, 255, 255); color: white;">
             <div class="modal-header">
-                <h5 class="modal-title" id="subtasks-title">SubTasks</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <h5 class="modal-title" id="subtasks-title" style="color:black;">SubTasks</h5>
+                <button type="button" class="close closeSubTask" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>

@@ -45,49 +45,24 @@
         });
     });
 
-    $(document).ready(function () {
 
-        //updateChecked();
 
-    });
-     function updateChecked() {
-        $(".CheckSub").each(function () {
-
-            var checkedNum = $(this).data("checked");
-            console.log(checkedNum);
-            if (checkedNum == 1) {
-
-                console.log("true");
-                $(this).attr('checked', true);
-            }
-            else {
-                console.log("false");
-
-                $(this).attr('checked', false);
-            }
-            });
-     }
+     
 </script>
+<button type="button" class="btn btn-outline-secondary btn-sm newSubTaskButton" style="width:100%;" onclick="javascript:NewButtonClick(event)">New</button>
+
+<div class="border border-info newRowElement newRowElementHidden" style="padding:10px; border-radius:5px; margin: 5px;">
+    <p style="color:black;">Name:</p>
+    <input type="text" class="subTaskName" style="width:80%" />
+    <button type="button" class="btn btn-outline-secondary btn-sm updateSubTasksButton" data-taskid="@Model[0].TaskID">Update</button>
+</div>
 
 <table class="table table-bordered table-hover">
-    <thead>
-        <tr>
-            <th scope="col"><button type="button" class="btn btn-outline-secondary btn-sm newSubTaskButton" onclick="javascript:NewButtonClick(event)">New</button></th>
-            <th scope="col">SubTask Name</th> 
-        </tr>
-    </thead>
-    <tbody>
-        <tr class="newRowElement newRowElementHidden">     
-            <td><input type="text" class="subTaskName" style="width:100%" /></td>
-            <td><button type="button" class="btn btn-outline-secondary btn-sm updateSubTasksButton" data-taskid="@Model[0].TaskID">Update</button></td>
-        </tr>
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <div class="border border-success subtask-div completed " data-subtaskid="@Model[i].SubTaskID" data-taskid="@Model[i].TaskID" style="margin: 5px; text-align: center; ">
+            <p style="margin-top: 5px; color: black;">@Model[i].SubTaskName</p>
+        </div>
 
-        @for (int i = 0; i < Model.Count; i++) {
-            <tr>
-                <th scope="row">@i</th>
-                <td>@Model[i].SubTaskName</td>                
-            </tr>
-        }
-    </tbody>
-</table>
 
+    }

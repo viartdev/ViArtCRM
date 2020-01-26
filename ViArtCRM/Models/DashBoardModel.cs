@@ -21,7 +21,13 @@ namespace ViArtCRM.Models {
         [DataMember(Name = "SubTaskName")]
         public string SubTaskName { get; set; }
     }
-
+    public class SubTaskCompleteMovingData
+    {
+        [DataMember(Name = "taskID")]
+        public int subTaskID { get; set; }
+        [DataMember(Name = "newComplete")]
+        public int newComplete { get; set; }
+    }
 
     public class TaskContainer {
         public int ModuleID { get; set; }
@@ -157,7 +163,17 @@ namespace ViArtCRM.Models {
             };
             SQLWrapper.InsertData<SubTask>(subTask, sqlInsertQuerySettings);
         }
-    
+
+        public void UpdateTask(TaskObject task)
+        {
+            SQLUpdateQuerySettings sqlUpdateQuerySettings = new SQLUpdateQuerySettings()
+            {
+                ConnectionString = this.ConnectionString,
+                TableName = "Tasks"
+            };
+            SQLWrapper.UpdateData<TaskObject>(task, sqlUpdateQuerySettings);
+        }
+
 
         public void InsertTask(TaskObject task) {
             SQLInsertQuerySettings sqlInsertQuerySettings = new SQLInsertQuerySettings() {
@@ -166,13 +182,22 @@ namespace ViArtCRM.Models {
             };
             SQLWrapper.InsertData<TaskObject>(task, sqlInsertQuerySettings);
         }
-        public void UpdateTask(TaskObject task) {
-            SQLUpdateQuerySettings sqlUpdateQuerySettings = new SQLUpdateQuerySettings() {
+        public void recompleteSubTask(int subtaskID, int willComplete)
+        {
+            SQLUpdateQuerySettings sqlUpdateQuerySettings = new SQLUpdateQuerySettings
+            {
                 ConnectionString = this.ConnectionString,
-                TableName = "Tasks"
+                TableName = "SubTasks",
+                QueryParams = new Dictionary<string, string> {
+                    {"isComplete",willComplete.ToString()}
+                },
+                WhereParams = new Dictionary<string, string> {
+                    {"SubTaskID",subtaskID.ToString() }
+                }
             };
-            SQLWrapper.UpdateData<TaskObject>(task, sqlUpdateQuerySettings);
+            SQLWrapper.UpdateData(sqlUpdateQuerySettings);
         }
+
         public void MoveTask(int taskID, int currentTaskStatus, int targetStatus) {
             SQLUpdateQuerySettings sqlUpdateQuerySettings = new SQLUpdateQuerySettings {
                 ConnectionString = this.ConnectionString,
