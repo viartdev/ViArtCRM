@@ -58,8 +58,8 @@
                 @if (item.TaskProgress == 100)
                 {
                     <div class="row">
-                        <div class="col-lg-12" style="margin-top: 15px;">
-                             <button class="btn btn-outline-danger btn-sm" style="width:100%;" >Finish</button>
+                        <div class="col-lg-12" style="margin-top: 15px;">                            
+                            <input type="submit" style="" data-taskID="@item.TaskID" data-taskStatus="@item.Status" value="Finish" class="btn btn-outline-dark btn-sm moveButton " />
                         </div>
                     </div>
                 }
