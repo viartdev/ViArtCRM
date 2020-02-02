@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using ViArtCRM.HelperTools;
 
@@ -38,6 +39,18 @@ namespace ViArtCRM.Models
         public int GroupID { get; set; }
         public int UserID { get; set; }
     }
+
+    public class MessageMovingData
+    {
+        [DataMember(Name = "userID")]
+        public int userID { get; set; }
+        [DataMember(Name = "groupID")]
+        public int groupID { get; set; }
+        [DataMember(Name = "messageText")]
+        public string messageText { get; set; }
+    }
+
+
     public class GroupContainer
     { 
         public List<GroupMessage> groupMessageList { get; set; }
@@ -62,6 +75,21 @@ namespace ViArtCRM.Models
             GroupContainer groupContainer = new GroupContainer();
             groupContainer.groupMessageList = GetGroup(userID);
             return groupContainer;
+        }
+
+        public void insertMessage(int userID, int groupID, string messageText)
+        {
+            MessageObject message = new MessageObject();
+            message.MessageText = messageText;
+            message.UserID = userID;
+            message.GroupID = groupID;
+
+            SQLInsertQuerySettings sqlInsertQuerySettings = new SQLInsertQuerySettings()
+            {
+                TableName = "ChatMessages",
+                ConnectionString = this.ConnectionString
+            };
+            SQLWrapper.InsertData<MessageObject>(message, sqlInsertQuerySettings);
         }
 
         public MessagesContainer getMessagesByGroupID(int groupID)

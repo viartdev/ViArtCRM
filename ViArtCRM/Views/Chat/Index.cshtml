@@ -5,12 +5,25 @@
 
 <script type="text/javascript">
 
+    var currentGroup;
     $(document).ready(function () {
 
         RefreshGroup();
-        
+        UpdateSendButton();
 
     });
+
+
+    $('.messageInput').keypress(function (event) {
+
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if (keycode == '13') {
+
+            alert('You pressed a "enter" key in textbox');  
+        }
+});
+
+
     function RefreshGroup() {
         var containerName = "messages-box";
         var string = '@Url.Action("LoadGroup","Chat")';
@@ -26,16 +39,72 @@
      function successFunctionA() {
         console.log("successA");
     }
+    function RefreshCurrentGroup(currentGroup) {
+        var groupID = currentGroup;
+        var containerName = "chat-box";
+        var string = '@Url.Action("LoadMessages","Chat")?groupID=' + groupID;
+        var currentGroup = groupID;
+        $('.' + containerName).load(string, successFunctionA);
+        scrollDown();
+    }
 
     function GroupMessagesClick() {
         $('.groupclick').on('click', function () {
             var groupID = $(this).data('groupid');
-            console.log(groupID);
             var containerName = "chat-box";
-             var string = '@Url.Action("LoadMessages","Chat")?groupID=' + groupID;
-             $('.' + containerName).load(string, successFunctionA)
+            var string = '@Url.Action("LoadMessages","Chat")?groupID=' + groupID;
+            currentGroup = groupID;
+            $('.' + containerName).load(string, successFunctionA);
+            scrollDown();
+             
         });
     }
+    function enterPressed() {
+        $('#someTextBox').keypress(function(event){
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if(keycode == '13'){
+            alert('You pressed a "enter" key in textbox');  
+    }
+});
+    }
+    function scrollDown() {
+        $('.chat-box').animate({scrollTop:$(".chat-box").offset().top + $(".chat-box")[0].scrollHeight});
+    }
+
+    function UpdateSendButton() {
+        $('#button-addon2').click(function (e) {
+            Send(e);
+
+        });
+    }
+    function Send(event) {
+        event.preventDefault();
+            
+        var message = $(".messageInput").val();
+        console.log("click");
+        var data = {
+            userID: @ViewBag.userID,
+            groupID: currentGroup,
+            messageText:  message
+
+        };
+            $.ajax({
+                url: '/Chat/SendMessage',
+                type: 'POST',
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                dataType: 'json',
+                error: function (xhr) {
+                    alert('Error: ' + xhr.statusText);
+                },
+                success: function (result) {
+                    RefreshCurrentGroup(currentGroup);
+                },
+                async: true,
+                processData: false
+            });
+    }
+
 </script>
 
 <div class="container py-5 px-4">
@@ -88,11 +157,11 @@
             </div>
 
             <!-- Typing area -->
-            <form action="#" class="bg-light">
+            <form class="bg-light" onsubmit="Send();">
                 <div class="input-group">
-                    <input type="text" placeholder="Type a message" aria-describedby="button-addon2" class="form-control rounded-0 border-0 py-4 bg-light">
+                    <input type="text" placeholder="Type a message"  class="form-control rounded-0 border-0 py-4 bg-light messageInput">
                     <div class="input-group-append">
-                        <button id="button-addon2" type="submit" class="btn btn-link"> <i class="fa fa-paper-plane"></i></button>
+                        <button id="button-addon2" type="button" class="btn btn-link messageButton"> Send </button>
                     </div>
                 </div>
             </form>

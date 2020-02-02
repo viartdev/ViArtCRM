@@ -12,6 +12,8 @@ namespace ViArtCRM.Controllers
         public IActionResult Index()
         {
             ChatContext context = HttpContext.RequestServices.GetService(typeof(ChatContext)) as ChatContext;
+            int userID = 1; //USER ID
+            ViewBag.userID = userID;
             return View();
         }
 
@@ -31,6 +33,16 @@ namespace ViArtCRM.Controllers
 
             return PartialView("ChatMessages", messages);
         }
+
+        [HttpPost]
+        public ActionResult SendMessage([FromBody]MessageMovingData data)
+        {
+            ChatContext context = HttpContext.RequestServices.GetService(typeof(ChatContext)) as ChatContext;
+            int rowsAffected = 1;
+            context.insertMessage(data.userID, data.userID, data.messageText);
+            return Json(String.Format("{{\"success\":\"{0}\"}}", rowsAffected > 0 ? "ok" : "no"));
+        }
+
 
     }
 }
