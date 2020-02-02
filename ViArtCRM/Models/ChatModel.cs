@@ -83,6 +83,7 @@ namespace ViArtCRM.Models
             message.MessageText = messageText;
             message.UserID = userID;
             message.GroupID = groupID;
+            message.MessageDate = DateTime.Now;
 
             SQLInsertQuerySettings sqlInsertQuerySettings = new SQLInsertQuerySettings()
             {
@@ -102,7 +103,7 @@ namespace ViArtCRM.Models
                 TableName = "ChatMessages",
                 QueryParams = new Dictionary<string, string>() { { "GroupID", groupID.ToString() } }
             };
-            list = SQLWrapper.SelectData<MessageObject>(sqlSelectQuerySettings);
+            list = SQLWrapper.SelectData<MessageObject>(sqlSelectQuerySettings).OrderBy(s => s.MessageDate).ToList();
             List<MessagePacket> packetList = new List<MessagePacket>(); 
             foreach(MessageObject message in list)
             {

@@ -47,9 +47,11 @@
         padding-top: 20px;
         padding-bottom: 20px
     }
-    .subtask-content{
+
+    .subtask-content {
         /*width:30%;*/
     }
+
     .modalless {
         /*top: 10%;
         left: 50%;
@@ -73,6 +75,7 @@
         RefreshContainer(1,@Model.ModuleID, 1);
         RefreshContainer(2,@Model.ModuleID, 2);
 
+
     });
     function GetContainerName(containerNumber) {
         switch (containerNumber) {
@@ -91,7 +94,7 @@
         }
     }
     function RefreshContainer(containerNumber, moduleID, taskStatus) {
-        var containerName = GetContainerName(containerNumber);
+        var containerName = GetContainerName(parseInt(containerNumber));
         var string = '@Url.Action("LoadModule","DashBoard")?taskStatus=' + taskStatus + '&moduleID=' + moduleID;
         $('#' + containerName).hide().load(string, UpdateModuleAfterAjax).fadeIn('5000');
     }
@@ -101,6 +104,44 @@
         UpdateEditButtonsActions();
         UpdateSubTasksButtons();
         updateCloseButton();
+        UpdateSaveEditButtonAction();
+    }
+    function GetFormData(formID) {
+        var editForm = $('#' + formID);
+        var inputs = $(editForm).children('div').children('input');
+        var formData = {};
+        for (var i = 0; i < inputs.length; i++) {
+            formData[inputs[i].id] = inputs[i].value
+        }
+        return formData;
+    }
+
+    function UpdateSaveEditButtonAction() {
+        $('.saveEdit').click(function (e) {
+            e.preventDefault();
+            console.log("click");
+            var data = GetFormData('editModalForm');
+
+            $.ajax({
+                url: '/DashBoard/EditMethod',
+                type: 'POST',
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                dataType: 'json',
+                error: function (xhr, ajaxOptions, thrownError) {                  
+                    alert(xhr.toString())
+                    alert(ajaxOptions.toString())
+                    alert(thrownError.toString())
+                },
+                success: function (result) {                   
+                    var isOk = result.success == 'ok';
+                    RefreshContainer(currentEditingTaskStatus,@Model.ModuleID, currentEditingTaskStatus);
+                    RefreshContainer(data.Status,@Model.ModuleID, data.Status);
+                },
+                async: true,
+                processData: false
+            });
+        });
     }
 
     function UpdateTimeColoros() {
@@ -147,13 +188,19 @@
             });
         });
     }
+    var currentEditingTaskStatus;
+    function OnEditLoadComplete() {
+        var data = GetFormData("editModalForm");
+        currentEditingTaskStatus = data.Status;
+        UpdateSaveEditButtonAction();
+    }
     function UpdateEditButtonsActions() {
         $('.editButton').on('click',function () {
             var taskID = $(this).data('taskid');
             console.log(taskID);
-            var containerName = "modalForm";
+            var containerName = "editModalWindow";
             var string = '@Url.Action("Edit","DashBoard")?taskID=' + taskID;
-            $('#' + containerName).load(string);
+            $('#' + containerName).load(string,OnEditLoadComplete);
         });
     }
     function UpdateSubTasksButtons() {
@@ -166,7 +213,7 @@
                 "top": $(card).offset().top,
                 "left": $(card).offset().left + cardWidth
             }
-            var modal = $('#subtasksContent')[0];            
+            var modal = $('#subtasksContent')[0];
             setTimeout(function () { $(modal).offset(cardOffset); }, 20);
 
             var containerName = "subtasksForm";
@@ -182,7 +229,7 @@
                 "top": $(card).offset().top,
                 "left": $(card).offset().left + cardWidth
             }
-            var modal = $('#subtasksContent')[0];            
+            var modal = $('#subtasksContent')[0];
             setTimeout(function () { $(modal).offset(cardOffset); }, 20);
 
             var containerName = "subtasksForm";
@@ -227,20 +274,20 @@
     <div id="completeBody" class="row">
     </div>
 </div>
-<div class="modal fade" id="exampleModal" tabindex="-1"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-               
+
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" id="modalForm">
+            <div class="modal-body" id="editModalWindow">
 
             </div>
             <div class="modal-footer">
-                
+
             </div>
         </div>
     </div>
@@ -257,7 +304,7 @@
             <div class="modal-body" id="subtasksForm">
 
             </div>
-           
+
         </div>
     </div>
 </div>

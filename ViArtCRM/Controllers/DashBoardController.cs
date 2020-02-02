@@ -24,27 +24,23 @@ namespace ViArtCRM.Controllers {
         public ActionResult LoadModule(int taskStatus, int moduleID) {
             TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
             var tasks = context.GetTasks(taskStatus, moduleID);
-            
+
             int i = 0;
-            foreach(var task in tasks)
-            {
-                if(task.TaskID == 3)
-                {
+            foreach (var task in tasks) {
+                if (task.TaskID == 3) {
                     task.TaskProgress = 10;
                 }
                 double nCompleted = 0;
                 double count = 0;
                 List<SubTask> subTasks = context.GetSubTasks(task.TaskID);
-                foreach(var subtask in subTasks)
-                {
-                    if(subtask.isComplete == 1)
-                    {
+                foreach (var subtask in subTasks) {
+                    if (subtask.isComplete == 1) {
                         nCompleted += 1;
                     }
                     count += 1;
                 }
                 double progress = 0;
-                if(count != 0) {
+                if (count != 0) {
                     double procents = nCompleted / count;
                     progress = procents * 100;
                 }
@@ -68,9 +64,8 @@ namespace ViArtCRM.Controllers {
             TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
             return PartialView(context.GetTaskByID(taskID));
         }
-        
-        public IActionResult ToDoSubTasks(int taskID)
-        {
+
+        public IActionResult ToDoSubTasks(int taskID) {
             TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
             var list = context.GetSubTasks(taskID);
             if (list.Count == 0) {
@@ -85,10 +80,8 @@ namespace ViArtCRM.Controllers {
         public IActionResult ModerateSubTasks(int taskID) {
             TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
             var list = context.GetSubTasks(taskID);
-            if (list.Count == 0)
-            {
-                list.Add(new SubTask
-                {
+            if (list.Count == 0) {
+                list.Add(new SubTask {
                     TaskID = taskID
                 });
                 return PartialView("EmptySubTasks", list);
@@ -108,8 +101,7 @@ namespace ViArtCRM.Controllers {
         }
 
         [HttpPost]
-        public ActionResult UpdateSubTask([FromBody]SubTaskMovingData data)
-        {
+        public ActionResult UpdateSubTask([FromBody]SubTaskMovingData data) {
             TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
             int rowsAffected = 1;
             context.UpdateSubTask(Convert.ToInt32(data.taskID), data.SubTaskName);
@@ -118,8 +110,7 @@ namespace ViArtCRM.Controllers {
         }
 
         [HttpPost]
-        public ActionResult recompleteSubTask([FromBody]SubTaskCompleteMovingData data)
-        {
+        public ActionResult recompleteSubTask([FromBody]SubTaskCompleteMovingData data) {
             TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
             int rowsAffected = 1;
             context.recompleteSubTask(Convert.ToInt32(data.subTaskID), data.newComplete);
@@ -127,12 +118,12 @@ namespace ViArtCRM.Controllers {
             return Json(String.Format("{{\"success\":\"{0}\"}}", rowsAffected > 0 ? "ok" : "no"));
         }
 
-        [HttpPost, ActionName("Edit")]
-        [ValidateAntiForgeryToken]
-        public ActionResult EditMethod(TaskObject task) {
+        [HttpPost]        
+        public ActionResult EditMethod([FromBody]TaskObject task) {
             TasksContext context = HttpContext.RequestServices.GetService(typeof(TasksContext)) as TasksContext;
             context.UpdateTask(task);
-            return RedirectToAction("Index", new { moduleID = task.ModuleID });
+            int rowsAffected = 1;
+            return Json(String.Format("{{\"success\":\"{0}\"}}", rowsAffected > 0 ? "ok" : "no"));
         }
 
         [HttpPost, ActionName("Create")]
