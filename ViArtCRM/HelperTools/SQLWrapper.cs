@@ -76,15 +76,13 @@ namespace ViArtCRM.HelperTools {
                 MySqlCommand cmd = new MySqlCommand(queryString, conn);
                 foreach (var item in sqlUpdateQuerySettings.QueryParams) {
                     cmd.Parameters.AddWithValue(String.Format("@{0}", item.Key), item.Value);
-                }             
+                }
                 foreach (var item in sqlUpdateQuerySettings.WhereParams) {
                     cmd.Parameters.AddWithValue(String.Format("@{0}", item.Key), String.Format("{0}", item.Value));
                 }
                 cmd.ExecuteNonQuery();
             }
         }
-
-
         public static void UpdateData(SQLUpdateQuerySettings sqlUpdateQuerySettings) {
             string queryString = sqlUpdateQuerySettings.QueryString;
             using (MySqlConnection conn = new MySqlConnection(sqlUpdateQuerySettings.ConnectionString)) {
@@ -92,13 +90,27 @@ namespace ViArtCRM.HelperTools {
                 MySqlCommand cmd = new MySqlCommand(queryString, conn);
                 foreach (var item in sqlUpdateQuerySettings.QueryParams) {
                     cmd.Parameters.AddWithValue(String.Format("@{0}", item.Key), item.Value);
-                }                
+                }
                 foreach (var item in sqlUpdateQuerySettings.WhereParams) {
                     cmd.Parameters.AddWithValue(String.Format("@{0}", item.Key), String.Format("{0}", item.Value));
                 }
                 cmd.ExecuteNonQuery();
             }
         }
+
+        public static void RemoveData(SQLRemoveQuerySettings sqlRemoveQuerySettings) {
+            string queryString = sqlRemoveQuerySettings.QueryString;
+            using (MySqlConnection conn = new MySqlConnection(sqlRemoveQuerySettings.ConnectionString)) {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand(queryString, conn);
+                foreach (var item in sqlRemoveQuerySettings.WhereParams) {
+                    cmd.Parameters.AddWithValue(String.Format("@{0}", item.Key), String.Format("{0}", item.Value));
+                }
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+
 
         static Dictionary<string, string> GetKeyFieldParam<T>(T dataObject) {
             Dictionary<string, string> dictionary = new Dictionary<string, string>();
@@ -272,6 +284,30 @@ namespace ViArtCRM.HelperTools {
         }
     }
     #endregion
+    #region SQLRemoveQuerySettings
+    public class SQLRemoveQuerySettings : SQLQuerySettings {
+        //DELETE FROM `table_name` [WHERE condition];
+        public Dictionary<string, string> WhereParams { get; set; }
+        public new string QueryString { get { return GetQueryString(); } }
+        private string GetQueryString() {
+            string queryString = String.Empty;
+            queryString = String.Format("DELETE FROM {0} WHERE {1}", TableName, GetWhereString(WhereParams));
+            return queryString;
+        }
+
+        private static string GetWhereString(Dictionary<string, string> whereParams) {
+            string result = String.Empty;
+            if (whereParams != null && whereParams.Count > 0) {
+                foreach (var param in whereParams) {
+                    result += String.Format(" {0}=@{1} and", param.Key, param.Key);
+                }
+                result = result.Remove(result.Length - 3, 3);
+            }
+            return result;
+        }
+    }
+    #endregion
+
     public class SQLHelperAttribute : Attribute {
 
         public string DataSourceFieldName { get; set; } = String.Empty;

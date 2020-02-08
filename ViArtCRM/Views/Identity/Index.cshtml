@@ -7,14 +7,14 @@
     <title>Login</title>
     <style>
         td {
-            border-style:solid;
+            border-style: solid;
             border-width: 1px;
-            border-color:black;
+            border-color: black;
         }
     </style>
 </head>
 <body>
-    <table>       
+    <table>
         <tr>
             <td>
                 First Name
@@ -53,6 +53,15 @@
             </td>
             <td>
                 @Model.UserRole
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                @using (Html.BeginForm("Logout", "Identity", FormMethod.Post)) {
+                    <div class="form-group">
+                        <button type="submit">Logout</button>
+                    </div>
+                }
             </td>
         </tr>
 

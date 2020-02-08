@@ -58,7 +58,7 @@ namespace ViArtCRM.Models {
             SQLSelectQuerySettings sqlSelectQuerySettings = new SQLSelectQuerySettings {
                 ConnectionString = this.ConnectionString,
                 TableName = "Users",
-                QueryParams = new Dictionary<string, string>() { { "Login", login }}
+                QueryParams = new Dictionary<string, string>() { { "Login", login } }
             };
 
             list = SQLWrapper.SelectData<User>(sqlSelectQuerySettings);
@@ -105,8 +105,11 @@ namespace ViArtCRM.Models {
             }
             return sessionKey;
         }
-        
+
         public UserSession CreateUserSession(User user) {
+            var serverUserSession = GetUserSession(user);
+            if (serverUserSession.UserID != -1)
+                ClearUserServerSession(user);
             UserSession userSession = new UserSession {
                 UserID = user.UserID,
                 Login = user.Login,
@@ -118,6 +121,17 @@ namespace ViArtCRM.Models {
             };
             SQLWrapper.InsertData<UserSession>(userSession, sqlInsertQuerySettings);
             return userSession;
+        }
+
+        public void ClearUserServerSession(User user) {
+            SQLRemoveQuerySettings sqlRemoveQuerySettings = new SQLRemoveQuerySettings {
+                ConnectionString = this.ConnectionString,
+                TableName = "UsersSessions",
+                WhereParams = new Dictionary<string, string>() {
+                   { "Login", user.Login }, { "UserID",  user.UserID.ToString() }
+                }
+            };
+            SQLWrapper.RemoveData(sqlRemoveQuerySettings);
         }
 
         public UserSession GetUserSession(User user) {

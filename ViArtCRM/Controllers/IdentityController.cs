@@ -12,7 +12,21 @@ namespace ViArtCRM.Controllers {
     public class IdentityController : Controller {
         public IActionResult Index() {
             var context = HttpContext.RequestServices.GetService(typeof(UserContext)) as UserContext;
-            return View("Index", context.GetUserByLogin(BrowserDataHelper.GetBrowserUserSession(Request.Cookies).Login));
+            var browserData = BrowserDataHelper.GetBrowserUserSession(Request.Cookies);
+            if (browserData != null) {
+                var data = context.GetUserByLogin(browserData.Login);
+                return View("Index", data);
+            }
+            else
+                return RedirectToAction("Login");
+            //return View("Login", new User());
+
+        }
+        [HttpPost]
+        public IActionResult Logout() {
+
+            BrowserDataHelper.ClearUserDataCookies(Request.Cookies, Response.Cookies);
+            return RedirectToAction("Login");
         }
 
         public IActionResult Login() {
@@ -22,7 +36,7 @@ namespace ViArtCRM.Controllers {
         public IActionResult Login(User user) {
             var cookiesSession = BrowserDataHelper.GetBrowserUserSession(Request.Cookies);
             if (cookiesSession != null)
-                return Index();
+                return RedirectToAction("Index");
             var userContext = HttpContext.RequestServices.GetService(typeof(UserContext)) as UserContext;
             var userData = userContext.GetUserByLoginAndPassword(user.Login, user.Password);
             if (userData == null) {
@@ -32,7 +46,7 @@ namespace ViArtCRM.Controllers {
             var sessionContext = HttpContext.RequestServices.GetService(typeof(SessionContext)) as SessionContext;
             var userSession = sessionContext.CreateUserSession(user);
             BrowserDataHelper.WriteUserDataToCookies(userSession, Response.Cookies);
-            return Index();
+            return RedirectToAction("Index");
         }
     }
 }

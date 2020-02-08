@@ -22,8 +22,19 @@ namespace ViArtCRM.HelperTools {
         public static void WriteUserDataToCookies(UserSession userSession, IResponseCookies cookies) {
             cookies.Append(userSessionStringVar, userSession.USession);
             cookies.Append(userIDVar, userSession.UserID.ToString());
-            cookies.Append(userLoginVar, userSession.Login);
-            
+            cookies.Append(userLoginVar, userSession.Login);            
+        }
+        public static void ClearUserDataCookies(IRequestCookieCollection requestCookieCollection,IResponseCookies cookies) {
+            var myCookies = requestCookieCollection.Keys;
+            foreach (string cookie in myCookies) {
+                cookies.Delete(cookie);
+            }
+            //UserSession userSession = new UserSession() {
+            //    Login = String.Empty,
+            //    UserID = -1,
+            //    USession = String.Empty
+            //};
+            //WriteUserDataToCookies(userSession, cookies);
         }
     }   
 }
