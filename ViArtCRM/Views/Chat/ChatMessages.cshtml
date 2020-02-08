@@ -6,31 +6,36 @@
 <!DOCTYPE html>
 
 @foreach (var item in Model.messages)
-{
-    @if (Model.currentUserID != item.userObject.UserID)
-    {
-        <!-- Sender Message-->
-        <div class="media w-50 mb-3">
-            <img style="width:50px; height:50px" src="https://sun9-67.userapi.com/c841438/v841438907/10bdb/dMowy6i_OmQ.jpg" alt="user" width="50" class="rounded-circle">
-            <div class="media-body ml-3">
-                <div class="bg-light rounded py-2 px-3 mb-2">
-                    <p class="text-small mb-0 text-muted">@item.messageObject.MessageText</p>
-                </div>
-                <p class="small text-muted">@item.userObject.FirstName @item.messageObject.MessageDate</p>
-            </div>
-        </div>
-    }
-    else
-    {
 
-        <!-- Reciever Message-->
-        <div class="media w-50 ml-auto mb-3">
-            <div class="media-body">
-                <div class="bg-primary rounded py-2 px-3 mb-2">
-                    <p class="text-small mb-0 text-white">@item.messageObject.MessageText</p>
+{
+    <div class="ListMessages" data-messageid="@item.messageObject.MessageID" data-groupid="@item.messageObject.GroupID">
+        
+
+        @if (Model.currentUserID != item.userObject.UserID)
+        {
+            <!-- Sender Message-->
+            <div class="media w-50 mb-3">
+                <img style="width:50px; height:50px" src="https://sun9-67.userapi.com/c841438/v841438907/10bdb/dMowy6i_OmQ.jpg" alt="user" width="50" class="rounded-circle">
+                <div class="media-body ml-3">
+                    <div class="bg-light rounded py-2 px-3 mb-2">
+                        <p class="text-small mb-0 text-muted">@item.messageObject.MessageText</p>
+                    </div>
+                    <p class="small text-muted">@item.userObject.FirstName @item.messageObject.MessageDate</p>
                 </div>
-                <p class="small text-muted">@item.userObject.FirstName @item.messageObject.MessageDate</p>
             </div>
-        </div>
-    }
+        }
+        else
+        {
+
+            <!-- Reciever Message-->
+            <div class="media w-50 ml-auto mb-3">
+                <div class="media-body">
+                    <div class="bg-primary rounded py-2 px-3 mb-2">
+                        <p class="text-small mb-0 text-white">@item.messageObject.MessageText</p>
+                    </div>
+                    <p class="small text-muted">@item.userObject.FirstName @item.messageObject.MessageDate</p>
+                </div>
+            </div>
+        }
+    </div>
 }

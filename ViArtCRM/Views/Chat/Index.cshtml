@@ -37,7 +37,9 @@
     }
 
      function successFunctionA() {
-        console.log("successA");
+         console.log("successA");
+        refreshGroupLastMessage();
+
     }
     function RefreshCurrentGroup(currentGroup) {
         var groupID = currentGroup;
@@ -54,6 +56,7 @@
             var containerName = "chat-box";
             var string = '@Url.Action("LoadMessages","Chat")?groupID=' + groupID;
             currentGroup = groupID;
+         
             $('.' + containerName).load(string, successFunctionA);
             scrollDown();
              
@@ -79,7 +82,6 @@
     }
     function Send(event) {
         event.preventDefault();
-            
         var message = $(".messageInput").val();
         console.log("click");
         var data = {
@@ -99,12 +101,38 @@
                 },
                 success: function (result) {
                     RefreshCurrentGroup(currentGroup);
+                    
                 },
                 async: true,
                 processData: false
             });
     }
+    function refreshGroupLastMessage() {
 
+        var lastID = $(".ListMessages").last().data("messageid");
+        var groupID = $(".ListMessages").last().data("groupid");
+
+        var data = {
+            messageID: lastID,
+            groupID: groupID,
+        };
+        $.ajax({
+            url: '/Chat/RefreshGroupLastMessage',
+            type: 'POST',
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            dataType: 'json',
+            error: function (xhr) {
+                alert('Error: ' + xhr.statusText);
+            },
+            success: function (result) {
+                RefreshGroup();
+                //RefreshCurrentGroup(currentGroup);
+            },
+            async: true,
+            processData: false
+        });
+    }
 </script>
 
 <div class="container py-5 px-4">

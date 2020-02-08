@@ -39,10 +39,19 @@ namespace ViArtCRM.Controllers
         {
             ChatContext context = HttpContext.RequestServices.GetService(typeof(ChatContext)) as ChatContext;
             int rowsAffected = 1;
-            context.insertMessage(data.userID, data.userID, data.messageText);
+            context.insertMessage(data.userID, data.groupID, data.messageText);
             return Json(String.Format("{{\"success\":\"{0}\"}}", rowsAffected > 0 ? "ok" : "no"));
         }
+        
 
+        [HttpPost]
+        public ActionResult RefreshGroupLastMessage([FromBody]RefreshGroupMovingData data)
+        {
+            ChatContext context = HttpContext.RequestServices.GetService(typeof(ChatContext)) as ChatContext;
+            int rowsAffected = 1;
+            context.RefreshGroupLastMessage(data.messageID, data.groupID);
+            return Json(String.Format("{{\"success\":\"{0}\"}}", rowsAffected > 0 ? "ok" : "no"));
+        }
 
     }
 }

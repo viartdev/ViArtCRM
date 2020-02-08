@@ -49,6 +49,14 @@ namespace ViArtCRM.Models
         [DataMember(Name = "messageText")]
         public string messageText { get; set; }
     }
+    public class RefreshGroupMovingData
+    {
+        [DataMember(Name = "messageID")]
+        public int messageID { get; set; }
+        [DataMember(Name = "groupID")]
+        public int groupID { get; set; }
+      
+    }
 
 
     public class GroupContainer
@@ -192,6 +200,23 @@ namespace ViArtCRM.Models
             list = SQLWrapper.SelectData<MessageObject>(sqlSelectQuerySettings);
 
             return list.First(s => s.MessageID == id);
+        }
+
+        public void RefreshGroupLastMessage(int messageID, int groupID)
+        {
+            SQLUpdateQuerySettings sqlUpdateQuerySettings = new SQLUpdateQuerySettings
+            {
+                ConnectionString = this.ConnectionString,
+                TableName = "GroupChat",
+                QueryParams = new Dictionary<string, string> {
+                    {"LastMessageID",messageID.ToString()}
+                },
+                WhereParams = new Dictionary<string, string> {
+                    {"GroupID",groupID.ToString() }
+                }
+            };
+
+            SQLWrapper.UpdateData(sqlUpdateQuerySettings);
         }
 
 
